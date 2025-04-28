@@ -57,6 +57,14 @@ limitations under the License.
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
                 <version>0.15</version>
+                <configuration>
+                 <excludes>
+                    <exclude>**/*.md</exclude>
+                    <exclude>**/*.gitignore</exclude>
+                    <exclude>**/target/**</exclude>
+                    <exclude>**/LICENSE</exclude>
+                 </excludes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
