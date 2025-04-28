@@ -7,7 +7,7 @@
 - **Esteban BIRET-TOSCANO**
 - **Junfang HE**
 - **Oussama LAHRACH**
-- **Walid** (Nom à compléter)
+- **Walid MESSAOUDI**
 
 ## 🔗 Ressources
 
