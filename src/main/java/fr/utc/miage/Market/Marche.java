@@ -52,8 +52,19 @@ public class Marche {
      * Get the actions available on the market
      * @return the actions available on the market
      */
-    public HashMap<Action, Integer> getActionsAvailable() {
+    public static HashMap<Action, Integer> getActionsAvailable() {
+        if(actionsAvailable == null) {
+            actionsAvailable = new HashMap<>();
+        }
         return actionsAvailable;
+    }
+
+
+    /**
+     * Clear the actions available on the market
+     */
+    public static void clearActionsAvailable() {
+        actionsAvailable.clear();
     }
 
 }

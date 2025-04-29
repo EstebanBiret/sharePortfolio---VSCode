@@ -16,6 +16,7 @@
 
 package fr.utc.miage.Acteurs;
 
+import Market.Marche;
 import fr.utc.miage.shares.Action;
 
 /**
@@ -38,12 +39,19 @@ public class Gestionnaire extends Personne {
     /**
      * Allows to create an action
      * @param action the name of the action
+     * @param quantity the quantity of actions to create
      * @return true if the action was created, false otherwise
      */
-    public boolean createAction(Action action) {
-        // TODO Auto-generated method stub
-        return false;
+    public void createAction(Action action, int quantity) {
+        if(Marche.getActionsAvailable().containsKey(action)) {
+            // If the action already exists, we update its quantity
+            int currentQuantity = Marche.getActionsAvailable().get(action);
+            Marche.getActionsAvailable().put(action, currentQuantity + quantity);
+        } else {
+            Marche.getActionsAvailable().put(action, quantity);
+        } 
     }
+
     /**
      * Allows to delete an action
      * @param action the name of the action
