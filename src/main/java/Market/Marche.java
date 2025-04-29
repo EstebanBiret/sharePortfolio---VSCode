@@ -49,9 +49,8 @@ public class Marche {
     }
 
     /**
-     * Allows to add an action to the market
-     * @param action the action to add
-     * @param quantity the quantity of actions to add
+     * Get the actions available on the market
+     * @return the actions available on the market
      */
     public HashMap<Action, Integer> getActionsAvailable() {
         return actionsAvailable;

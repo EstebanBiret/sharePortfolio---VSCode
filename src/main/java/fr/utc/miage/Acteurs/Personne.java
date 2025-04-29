@@ -16,6 +16,11 @@
 
 package fr.utc.miage.Acteurs;
 
+/**
+ * This class represents a person.
+ * 
+ * @author Maxime Segot-Laberou, Junfang He
+ */
 public abstract class Personne {
 
     /**
