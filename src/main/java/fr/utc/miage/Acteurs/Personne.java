@@ -55,6 +55,7 @@ public abstract class Personne {
     }
     /**
      * Allows to set the name of the person
+     * @param nom the name of the person
      */
     
     public void setName(String nom) {
@@ -71,6 +72,7 @@ public abstract class Personne {
 
     /**
      * Allows to set the first name of the person
+     * @param prenom the first name of the person
      */
     public void setFirstName(String prenom) {
         this.firstName = prenom;

@@ -83,6 +83,7 @@ public class Investisseur extends Personne {
 
     /**
      * Allows to set the balance of the investor
+     * @param solde the balance of the investor
      */
     public void setBalance(float solde) {
         balance = solde;

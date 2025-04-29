@@ -37,18 +37,28 @@ public class Gestionnaire extends Personne {
 
     /**
      * Allows to create an action
-     * @param libelle the name of the action
+     * @param action the name of the action
      * @return true if the action was created, false otherwise
      */
     public boolean createAction(Action action) {
         // TODO Auto-generated method stub
         return false;
     }
+    /**
+     * Allows to delete an action
+     * @param action the name of the action
+     * @return true if the action was deleted, false otherwise
+     */
 
     public boolean deleteAction(Action action) {
         // TODO Auto-generated method stub
         return false;
     }
+     /**
+     * Allows to update an action
+     * @param action the name of the action
+     * @return true if the action was updated   , false otherwise
+     */
 
     public boolean updateAction(Action action) {
         // TODO Auto-generated method stub
