@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package Market;
+package fr.utc.miage.Market;
 
 import java.util.HashMap;
 
