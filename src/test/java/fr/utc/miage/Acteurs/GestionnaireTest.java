@@ -5,7 +5,7 @@ import java.util.HashMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import Market.Marche;
+import fr.utc.miage.Market.Marche;
 import fr.utc.miage.shares.Action;
 import fr.utc.miage.shares.ActionSimple;
 
@@ -17,7 +17,16 @@ public class GestionnaireTest {
 
     private final Action ACTION1 = new ActionSimple("Action1");
 
-
+    @Test
+    void TestConstructeurGestionnaire(){
+        //WHEN
+        Gestionnaire gestionnaire = new Gestionnaire(NAME_GESTIONNAIRE1,FIRST_NAME_GESTIONNAIRE1,PASSWORD_GESTIONNAIRE1);
+        //THEN
+        Assertions.assertAll(
+            () -> Assertions.assertEquals(gestionnaire.getName(), NAME_GESTIONNAIRE1),
+            () -> Assertions.assertEquals(gestionnaire.getFirstName(), FIRST_NAME_GESTIONNAIRE1)
+        );
+    }
 
     @Test
     void testCreateActionWithNonExistantAction() {
@@ -58,4 +67,6 @@ public class GestionnaireTest {
         Marche.clearActionsAvailable(); // Clear the actions available on the market for the next test
 
     }
+
+   
 }
