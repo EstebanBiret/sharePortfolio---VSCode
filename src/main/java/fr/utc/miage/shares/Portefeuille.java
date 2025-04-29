@@ -37,8 +37,9 @@ public class Portefeuille {
      * @param actions : Map d'actions (simples et composées) et de leur quantité
      */
     public Portefeuille(Map<Action, Integer> actions) {
-        this.actions = actions;
+        this.actions = new HashMap<>(actions);
     }
+    
 
     /*
      * Récupérer la map d'actions du portefeuille
@@ -104,7 +105,7 @@ public class Portefeuille {
         if (actions.containsKey(action)) { //si l'action existe déjà, on retourne la quantité
             return actions.get(action);
         } else {
-            return 0; //l'action n'existe pas dans le portefeuille
+            return -1; //l'action n'existe pas dans le portefeuille
         }
     }
 
