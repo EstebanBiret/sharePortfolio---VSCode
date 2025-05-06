@@ -17,7 +17,6 @@
 package fr.utc.miage.Acteurs;
 
 import fr.utc.miage.Market.Marche;
-import fr.utc.miage.shares.Action;
 import fr.utc.miage.shares.ActionSimple;
 import fr.utc.miage.shares.Jour;
 import fr.utc.miage.shares.Portefeuille;
@@ -131,14 +130,31 @@ public class Investisseur extends Personne {
 
     /**
      * Allows to sell an action
-     * @param action the action to sell
+     * @param actionSimple the action to sell
      * @param quantity the quantity of actions to sell
      * @return true if the sale was made, false otherwise
      */
+    public boolean sellActionSimple(ActionSimple actionSimple, int quantity) {
+        // Vérifie que l'investisseur possède assez d'actions à vendre
+        if (wallet.getQuantity(actionSimple) < quantity) return false;
 
-    public boolean sellAction(Action action, int quantity) {
-        // TODO Auto-generated method stub
-        return false;
+        // Récupère la valeur de l'action pour le jour actuel
+        Jour jour = Jour.getActualJour();
+        float value = actionSimple.valeur(jour);
+
+        // Si la valeur est nulle, on ne peut pas vendre
+        if (value == 0) return false;
+
+        // Ajoute l'argent au solde de l'investisseur
+        balance += value * quantity;
+
+        // Retire les actions du portefeuille
+        wallet.removeAction(actionSimple, quantity);
+
+        // Ajoute les actions sur le marché
+        Marche.updateActionQuantity(actionSimple, quantity, true);
+
+        return true;
     }
-    
+
 }
