@@ -70,7 +70,6 @@ public class Gestionnaire extends Personne {
      * @param quantity the quantity of actions to update
      * @return true if the action was updated   , false otherwise
      */
-
     public boolean updateAction(Action action, int quantity) {
         if (action == null) return false;
         if (Marche.getActionsAvailable().containsKey(action)) {
@@ -79,7 +78,5 @@ public class Gestionnaire extends Personne {
         }
         return false;
     }
-
-      
 
 }
