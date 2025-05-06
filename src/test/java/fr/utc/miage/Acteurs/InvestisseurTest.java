@@ -16,19 +16,20 @@
 
 package fr.utc.miage.Acteurs;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import fr.utc.miage.Market.Marche;
 import fr.utc.miage.shares.Action;
 import fr.utc.miage.shares.ActionSimple;
 import fr.utc.miage.shares.Jour;
 import fr.utc.miage.shares.Portefeuille;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-
-import java.util.HashMap;
 
 class InvestisseurTest {
 
@@ -86,8 +87,6 @@ class InvestisseurTest {
                 () -> assertEquals(wallet, investisseurTest.getWallet())
         );
     }
-
-
 
     @Test
     void testBuyActionSuccess() {
@@ -161,6 +160,18 @@ class InvestisseurTest {
                 () -> assertTrue(investisseur.getWallet().getActions().containsKey(actionNoValue)),
                 () -> assertEquals(10, Marche.getActionsAvailable().get(actionNoValue))
         );
+    }
+
+    @Test
+    void testGetValueOfActionForGivenDayShouldWork() {
+        float value = investisseur.getValueOfActionForGivenDay(action, jour);
+        assertEquals(150, value);
+    }
+
+    @Test
+    void testGetValueOfActionForInexistingDay() {
+        float value = investisseur.getValueOfActionForGivenDay(actionNoValue, new Jour(2023, 367));
+        assertEquals(0, value);
     }
 
 }
