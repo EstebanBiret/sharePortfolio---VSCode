@@ -16,18 +16,18 @@
 
 package fr.utc.miage.Market;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
+import fr.utc.miage.shares.Action;
 import fr.utc.miage.shares.ActionSimple;
 import fr.utc.miage.shares.Jour;
-import fr.utc.miage.shares.Action;
 
 public class MarcheTest {
     private final Action ACTION1 = new ActionSimple("Action1");
@@ -82,16 +82,9 @@ public class MarcheTest {
         Marche.clearActionsAvailable();
     }
 
-    
-
-
-
-
-
     @Test
     void testClearActionsAvailable() {
         //GIVEN
-        Marche marche = new Marche();
         Marche.getActionsAvailable().put(ACTION1, 20);
         Marche.getActionsAvailable().put(ACTION2, 50);
 
@@ -105,9 +98,7 @@ public class MarcheTest {
 
     @Test
     void testGetActionsAvailable() {
-
         //GIVEN
-        Marche marche = new Marche();
         Marche.getActionsAvailable().put(ACTION1, 20);
         Marche.getActionsAvailable().put(ACTION2, 50);
 
@@ -118,7 +109,6 @@ public class MarcheTest {
         assertEquals(20, actionsAvailable.get(ACTION1));
         assertEquals(50, actionsAvailable.get(ACTION2));
         Marche.clearActionsAvailable();
-
     }
 
     @Test
@@ -166,7 +156,6 @@ public class MarcheTest {
             () -> assertEquals(ACTION5, actions.get(0))
         );
         Marche.clearActionsAvailable();
-
     }
 
     @Test
@@ -190,8 +179,8 @@ public class MarcheTest {
             () -> assertEquals(ACTION1, actions.get(4))
         );
         Marche.clearActionsAvailable();
-
     }
+
     @Test
     void testTriActionsAvalablesWithQuantityDsc(){
         //GIVEN
@@ -213,13 +202,11 @@ public class MarcheTest {
             () -> assertEquals(ACTION1, actions.get(0))
         );
         Marche.clearActionsAvailable();
-
     }
 
     @Test
     void testTriActionsSimpleAvalablesWithPriceAsc(){
         //GIVEN
-        
         ActionSimple actionSimple1 = new ActionSimple("Action1");
         ActionSimple actionSimple2 = new ActionSimple("Action2");
         ActionSimple actionSimple3 = new ActionSimple("Action3");
@@ -250,13 +237,11 @@ public class MarcheTest {
             () -> assertEquals(actionSimple5, actions.get(4))
         );
         Marche.clearActionsAvailable();
-
     }
 
     @Test
     void testTriActionsSimpleAvalablesWithPriceDsc(){
         //GIVEN
-        
         ActionSimple actionSimple1 = new ActionSimple("Action1");
         ActionSimple actionSimple2 = new ActionSimple("Action2");
         ActionSimple actionSimple3 = new ActionSimple("Action3");
@@ -287,6 +272,126 @@ public class MarcheTest {
             () -> assertEquals(actionSimple1, actions.get(4))
         );
         Marche.clearActionsAvailable();
-
     }
+
+    @Test
+    void testSetActionsAvailable() {
+        // GIVEN
+        HashMap<Action, Integer> newActions = new HashMap<>();
+        newActions.put(ACTION1, 100);
+        newActions.put(ACTION2, 200);
+
+        // WHEN
+        Marche marche = new Marche();
+        marche.setActionsAvailable(newActions);
+
+        // THEN
+        HashMap<Action, Integer> actions = Marche.getActionsAvailable();
+        assertEquals(100, actions.get(ACTION1));
+        assertEquals(200, actions.get(ACTION2));
+        Marche.clearActionsAvailable();
+    }
+
+    @Test
+    void testIsActionAvailableWithQuantityTrue() {
+        // GIVEN
+        Marche.getActionsAvailable().put(ACTION1, 30);
+
+        // WHEN
+        boolean result = Marche.isActionAvailableWithQuantity(ACTION1, 20);
+
+        // THEN
+        assertTrue(result);
+        Marche.clearActionsAvailable();
+    }
+
+    @Test
+    void testIsActionAvailableWithQuantityFalseNotEnough() {
+        // GIVEN
+        Marche.getActionsAvailable().put(ACTION1, 10);
+
+        // WHEN
+        boolean result = Marche.isActionAvailableWithQuantity(ACTION1, 20);
+
+        // THEN
+        Assertions.assertFalse(result);
+        Marche.clearActionsAvailable();
+    }
+
+    @Test
+    void testIsActionAvailableWithQuantityFalseNotPresent() {
+        // GIVEN
+        // Ne pas insérer d’action dans le marché
+
+        // WHEN
+        boolean result = Marche.isActionAvailableWithQuantity(ACTION1, 10);
+
+        // THEN
+        Assertions.assertFalse(result);
+        Marche.clearActionsAvailable();
+    }
+
+    @Test
+    void testUpdateActionQuantityIncrease() {
+        // GIVEN
+        Marche.getActionsAvailable().put(ACTION1, 10);
+
+        // WHEN
+        boolean updated = Marche.updateActionQuantity(ACTION1, 5, true);
+
+        // THEN
+        assertTrue(updated);
+        assertEquals(15, Marche.getActionsAvailable().get(ACTION1));
+        Marche.clearActionsAvailable();
+    }
+
+    @Test
+    void testUpdateActionQuantityDecreaseSuccess() {
+        // GIVEN
+        Marche.getActionsAvailable().put(ACTION1, 20);
+
+        // WHEN
+        boolean updated = Marche.updateActionQuantity(ACTION1, 10, false);
+
+        // THEN
+        assertTrue(updated);
+        assertEquals(10, Marche.getActionsAvailable().get(ACTION1));
+        Marche.clearActionsAvailable();
+    }
+
+    @Test
+    void testUpdateActionQuantityDecreaseFail() {
+        // GIVEN
+        Marche.getActionsAvailable().put(ACTION1, 5);
+
+        // WHEN
+        boolean updated = Marche.updateActionQuantity(ACTION1, 10, false);
+
+        // THEN
+        Assertions.assertFalse(updated);
+        assertEquals(5, Marche.getActionsAvailable().get(ACTION1)); // Pas de changement
+        Marche.clearActionsAvailable();
+    }
+
+    @Test
+    void testUpdateActionQuantityActionNotPresent() {
+        // GIVEN
+        // Aucun ajout préalable
+
+        // WHEN
+        boolean updated = Marche.updateActionQuantity(ACTION1, 5, true);
+
+        // THEN
+        Assertions.assertFalse(updated);
+        assertTrue(Marche.getActionsAvailable().isEmpty());
+        Marche.clearActionsAvailable();
+    }
+
+    @Test
+    public void testTriActionsAvailableInvalidMethod() {
+        ArrayList<Action> result = Marche.triActionsAvailable("invalide", true);
+        assertNotNull(result);
+        assertTrue(result.isEmpty(), "Le résultat devrait être une liste vide pour une méthode de tri invalide.");
+    }
+
 }

@@ -97,6 +97,14 @@ public class Investisseur extends Personne {
     }
 
     /**
+     * Allows to set the wallet of the investor
+     * @param wallet the wallet of the investor
+     */
+    public void setWallet(Portefeuille wallet) {
+        this.wallet = wallet;
+    }
+
+    /**
      * Allows to buy an action
      * @param actionSimple the action to buy
      * @param quantity the quantity of actions to buy
@@ -129,7 +137,6 @@ public class Investisseur extends Personne {
         }
         return false; //l'action n'est pas disponible sur le marché avec la quantité demandée
     }
-
 
     /**
      * Allows to sell an action

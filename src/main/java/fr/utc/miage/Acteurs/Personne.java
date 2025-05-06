@@ -36,7 +36,7 @@ public abstract class Personne {
     /**
      * Password of the person
      */
-    private String password;
+    private final String password;
 
     /**
      * Constructor of the Personne class
