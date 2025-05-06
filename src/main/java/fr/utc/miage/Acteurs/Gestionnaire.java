@@ -59,8 +59,11 @@ public class Gestionnaire extends Personne {
      */
 
     public boolean deleteAction(Action action) {
-        // TODO Auto-generated method stub
-        return false;
+        if (Marche.getActionsAvailable().containsKey(action)) {
+        Marche.getActionsAvailable().remove(action);
+        return true;
+    }
+    return false;
     }
      /**
      * Allows to update an action
@@ -69,9 +72,14 @@ public class Gestionnaire extends Personne {
      */
 
     public boolean updateAction(Action action) {
-        // TODO Auto-generated method stub
+        if (action == null) return false;
+        if (Marche.getActionsAvailable().containsKey(action)) {
+            Marche.getActionsAvailable().put(action, 0);
+            return true;
+        }
         return false;
     }
 
+      
 
 }
