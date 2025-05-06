@@ -86,7 +86,7 @@ public class Investisseur extends Personne {
         balance = solde;
     }
 
-    /*
+    /**
      * Allows to consult the wallet of the investor
      * @return the wallet of the investor
      */

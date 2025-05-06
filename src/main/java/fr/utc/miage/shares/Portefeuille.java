@@ -19,8 +19,17 @@ package fr.utc.miage.shares;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class represents a portfolio of shares.
+ * It allows to manage the shares owned by an investor.
+ * 
+ * @author Esteban BIRET-TOSCANO, Flavien DIAS
+ */
 public class Portefeuille {
 
+    /**
+     * Map of shares (simple and composite) and their quantity
+     */
     private Map <Action, Integer> actions;
 
     /**
@@ -61,6 +70,8 @@ public class Portefeuille {
      * Ajouter une action au portefeuille en autant de quantité que nécessaire
      * @param action : Action à ajouter
      * @param quantity : Quantité d'actions à ajouter
+     * 
+     * @return : true si l'action a été ajoutée, false sinon
      */
     public boolean addAction(Action action, int quantity) {
         if (quantity <= 0) {
@@ -78,6 +89,8 @@ public class Portefeuille {
      * Supprimer une action du portefeuille en autant de quantité que nécessaire
      * @param action : Action à supprimer
      * @param quantity : Quantité d'actions à supprimer
+     * 
+     * @return : L'action supprimée ou null si l'action n'existe pas dans le portefeuille
      */
     public Action removeAction(Action action, int quantity) {
         if (quantity <= 0) {
@@ -99,6 +112,7 @@ public class Portefeuille {
     /**
      * Récupérer la quantité d'une action dans le portefeuille
      * @param action : Action dont on veut connaître la quantité
+     * 
      * @return : La quantité d'actions dans le portefeuille
      */
     public int getQuantity(Action action) {
