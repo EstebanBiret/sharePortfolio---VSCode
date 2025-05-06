@@ -68,13 +68,14 @@ public class Gestionnaire extends Personne {
      /**
      * Allows to update an action
      * @param action the name of the action
+     * @param quantity the quantity of actions to update
      * @return true if the action was updated   , false otherwise
      */
 
-    public boolean updateAction(Action action) {
+    public boolean updateAction(Action action, int quantity) {
         if (action == null) return false;
         if (Marche.getActionsAvailable().containsKey(action)) {
-            Marche.getActionsAvailable().put(action, 0);
+            Marche.getActionsAvailable().put(action, quantity);
             return true;
         }
         return false;

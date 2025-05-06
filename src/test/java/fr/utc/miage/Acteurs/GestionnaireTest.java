@@ -21,6 +21,9 @@ public class GestionnaireTest {
 
     private final Action ACTION1 = new ActionSimple("Action1");
 
+    private final int NEW_QUANTITY = 5;
+
+
     @Test
     void TestConstructeurGestionnaire(){
         //WHEN
@@ -100,22 +103,27 @@ public class GestionnaireTest {
 
         // THEN
         Assertions.assertFalse(result);
+
+        Marche.clearActionsAvailable();
     }
 
    @Test
     void testUpdateActionWhenActionExists() {
         // GIVEN 
         Gestionnaire gestionnaire = new Gestionnaire(NAME_GESTIONNAIRE1, FIRST_NAME_GESTIONNAIRE1, PASSWORD_GESTIONNAIRE1);
-        Marche.getActionsAvailable().put(ACTION1, 100);
+        Marche.getActionsAvailable().put(ACTION1, 0);
+
 
         // WHEN 
-        boolean result = gestionnaire.updateAction(ACTION1);
+        boolean result = gestionnaire.updateAction(ACTION1, NEW_QUANTITY);
 
         // THEN 
         assertAll(
             () -> assertTrue(result),
-            () -> assertEquals(0, Marche.getActionsAvailable().get(ACTION1))
+            () -> assertEquals(NEW_QUANTITY, Marche.getActionsAvailable().get(ACTION1))
         );
+
+        Marche.clearActionsAvailable();
     }
 
     @Test
@@ -124,10 +132,12 @@ public class GestionnaireTest {
         Gestionnaire gestionnaire = new Gestionnaire(NAME_GESTIONNAIRE1, FIRST_NAME_GESTIONNAIRE1, PASSWORD_GESTIONNAIRE1);
 
         // WHEN 
-        boolean result = gestionnaire.updateAction(ACTION1);
+        boolean result = gestionnaire.updateAction(ACTION1, NEW_QUANTITY);
 
         // THEN 
         assertFalse(result);
+
+        Marche.clearActionsAvailable();
     }
 
     @Test
@@ -136,10 +146,12 @@ public class GestionnaireTest {
          Gestionnaire gestionnaire = new Gestionnaire(NAME_GESTIONNAIRE1, FIRST_NAME_GESTIONNAIRE1, PASSWORD_GESTIONNAIRE1);
 
         // WHEN 
-        boolean result = gestionnaire.updateAction(null);
+        boolean result = gestionnaire.updateAction(null, NEW_QUANTITY);
 
         // THEN 
         assertFalse(result);
+
+        Marche.clearActionsAvailable();
     }
 
    
