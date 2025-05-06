@@ -17,6 +17,8 @@
 package fr.utc.miage.Acteurs;
 
 import fr.utc.miage.shares.Action;
+import fr.utc.miage.shares.Jour;
+import fr.utc.miage.shares.Portefeuille;
 
 /**
  * This class represents an investor.
@@ -47,30 +49,9 @@ public class Investisseur extends Personne {
         this.balance = solde;
     }
 
-    /**
-     * Allows to buy an action
-     * @param action the action to buy
-     * @param quantity the quantity of actions to buy
-     * @return true if the purchase was made, false otherwise
-     */
-    
-    public boolean buyAction(Action action, int quantity) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 
 
-    /**
-     * Allows to sell an action
-     * @param action the action to sell
-     * @param quantity the quantity of actions to sell
-     * @return true if the sale was made, false otherwise
-     */
-
-    public boolean vendreAction(Action action, int quantity) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+  
 
 
     /**
@@ -89,4 +70,64 @@ public class Investisseur extends Personne {
         balance = solde;
     }
     
+/**
+ * Achète une action et l’ajoute au portefeuille de l'investisseur.
+ * Le coût est déduit du solde de l’investisseur.
+ *
+ * @param p le portefeuille de l'investisseur
+ * @param action l'action à acheter
+ * @param quantite la quantité à acheter
+ * @param jour le jour pour évaluer la valeur de l'action
+ * @return true si l’achat a été effectué, false sinon
+ */
+public boolean buyAction(Portefeuille p, Action action, int quantite, Jour jour) {
+    if (quantite <= 0) {
+        throw new IllegalArgumentException("La quantité doit être positive.");
+    }
+
+    float valeurTotale = action.valeur(jour) * quantite;
+
+    if (valeurTotale > getBalance()) {
+        return false; // Fonds insuffisants
+    }
+
+    boolean ajoutee = p.addAction(action, quantite);
+    if (ajoutee) {
+        setBalance(getBalance() - valeurTotale); // Déduction du solde
+        return true;
+    }
+
+    return false;
+}
+
+
+/**
+ * Vend une action du portefeuille de l'investisseur.
+ * La méthode met à jour le solde de l'investisseur selon la valeur de l'action.
+ *
+ * @param p le portefeuille de l'investisseur
+ * @param action l'action à vendre
+ * @param quantite la quantité à vendre
+ * @param jour le jour auquel on évalue la valeur de l'action
+ * @return true si la vente a été effectuée, false sinon
+ */
+public boolean sellAction(Portefeuille portefeuille, Action action, int quantity, Jour jour) {
+    if (quantity <= 0) {
+        throw new IllegalArgumentException("La quantité doit être positive.");
+    }
+
+    int currentQuantity = portefeuille.getQuantity(action);
+    if (currentQuantity < quantity) {
+        return false; 
+    }
+
+    float valeur = action.valeur(jour);
+    portefeuille.removeAction(action, quantity);
+    balance += valeur * quantity;
+    return true;
+}
+
+
+
+
 }
