@@ -82,4 +82,12 @@ public abstract class Personne {
     public void setFirstName(String prenom) {
         this.firstName = prenom;
     }
+
+    /**
+     * Allows to consult the password of the person
+     * @return the password of the person
+     */
+    public String getPassword() {
+        return password;
+    }
 }

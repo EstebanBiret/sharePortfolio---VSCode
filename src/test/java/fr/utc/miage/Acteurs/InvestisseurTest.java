@@ -16,17 +16,20 @@
 
 package fr.utc.miage.Acteurs;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.HashMap;
 
-import fr.utc.miage.shares.Action;
-import fr.utc.miage.shares.ActionSimple;
-import fr.utc.miage.shares.Jour;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import Market.Marche;
-
-import java.util.HashMap;
+import fr.utc.miage.shares.Action;
+import fr.utc.miage.shares.ActionSimple;
+import fr.utc.miage.shares.Jour;
+import fr.utc.miage.shares.Portefeuille;
 
 class InvestisseurTest {
 
@@ -53,6 +56,28 @@ class InvestisseurTest {
         marche = new Marche(actions);
     }
 
+    @Test 
+    void constructorShouldWork() {
+        assertAll(
+                () -> assertEquals("John", investisseur.getName()),
+                () -> assertEquals("Doe", investisseur.getFirstName()),
+                () -> assertEquals("password", investisseur.getPassword()),
+                () -> assertEquals(1000, investisseur.getBalance())
+        );
+    }
+
+    @Test
+    void constructorWithWalletTest() {
+        Portefeuille wallet = new Portefeuille();
+        investisseur = new Investisseur("John", "Doe", "password", 1000, wallet);
+        assertAll(
+                () -> assertEquals("John", investisseur.getName()),
+                () -> assertEquals("Doe", investisseur.getFirstName()),
+                () -> assertEquals("password", investisseur.getPassword()),
+                () -> assertEquals(1000, investisseur.getBalance()),
+                () -> assertEquals(wallet, investisseur.getWallet())
+        );
+    }
 
     @Test
     void testBuyActionSuccess() {
@@ -91,8 +116,12 @@ class InvestisseurTest {
     void testBuyActionInsufficientBalance() {
         investisseur.setBalance(100);
         boolean result = investisseur.buyActionSimple(action, 5);
-        assertFalse(result);
+        assertAll(
+                () -> assertFalse(result),
+                () -> assertEquals(100, investisseur.getBalance()),
+                () -> assertFalse(investisseur.getWallet().getActions().containsKey(action)),
+                () -> assertEquals(10, marche.getActionsAvailable().get(action))
+        );
     }
 
-    // Autres tests...
 }
