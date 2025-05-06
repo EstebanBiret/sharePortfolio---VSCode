@@ -16,44 +16,76 @@
 
 package fr.utc.miage.shares;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class ActionCompose extends Action {
 
-    // Nouvelle structure : chaque ActionSimple a un pourcentage
+    /**
+     * The composition of this composite action
+     * Each simple action is associated with a percentage (from 0 to 100)
+     */
     private Map<ActionSimple, Double> composition;
 
+    /**
+     * Builds a composite action from a label and a map of simple actions with their corresponding percentages
+     *
+     * @param libelle the name of the composite action
+     * @param composition simple actions and their percentage weights
+     */
     protected ActionCompose(String libelle, Map<ActionSimple, Double> composition) {
         super(libelle);
         this.composition = composition;
     }
 
+    /**
+     * Returns the current composition of this composite action
+     *
+     * @return a map of simple actions and their associated percentages
+     */
     public Map<ActionSimple, Double> getComposition() {
         return composition;
     }
 
+    /**
+     * Updates the composition of this composite action.
+     *
+     * @param composition the new simple actions and their percentage weights
+     */
     public void setComposition(Map<ActionSimple, Double> composition) {
         this.composition = composition;
     }
 
+    /**
+     * Computes the value of this composite action for a given day {@code j}.
+     *
+     * @param j the day for which to compute the value
+     * @return the computed value of the composite action
+     */
     @Override
     public float valeur(Jour j) {
         float total = 0f;
         for (Map.Entry<ActionSimple, Double> entry : composition.entrySet()) {
             ActionSimple action = entry.getKey();
-            Double pourcentage = entry.getValue();
-            total += action.valeur(j) * (pourcentage / 100);
+            Double percentage = entry.getValue();
+            total += action.valeur(j) * (percentage / 100);
         }
         return total;
     }
 
-    // Méthode pour retourner les pourcentages de composition
+    /**
+     * Returns the current percentage breakdown of the composition
+     *
+     * @return a map of simple actions with their percentage weights
+     */
     public Map<ActionSimple, Double> pourcentage() {
         return this.composition;
     }
 
-    // Méthode pour modifier les pourcentages de composition
+    /**
+     * Modifies the percentage breakdown of this composite action.
+     *
+     * @param nouvelleComposition the new composition map
+     */
     public void modifierComposition(Map<ActionSimple, Double> nouvelleComposition) {
         this.composition = nouvelleComposition;
     }
