@@ -18,6 +18,9 @@
 
  import java.util.Map;
  
+ /**
+  * This class represents a composite action.
+  */
  public class ActionCompose extends Action {
  
      /**

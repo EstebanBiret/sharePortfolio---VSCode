@@ -172,8 +172,8 @@ public class Investisseur extends Personne {
      * Achète une action et l’ajoute au portefeuille de l'investisseur.
      * Le coût est déduit du solde de l’investisseur.
      *
-     * @param action l'action à acheter
-     * @param quantite la quantité à acheter
+     * @param actionCompose l'action à acheter
+     * @param quantity la quantité à acheter
      * @return true si l’achat a été effectué, false sinon
      */
     public boolean buyActionCompose(ActionCompose actionCompose, int quantity) {
@@ -207,10 +207,8 @@ public class Investisseur extends Personne {
      * Vend une action du portefeuille de l'investisseur.
      * La méthode met à jour le solde de l'investisseur selon la valeur de l'action.
      *
-     * @param p le portefeuille de l'investisseur
-     * @param action l'action à vendre
-     * @param quantite la quantité à vendre
-     * @param jour le jour auquel on évalue la valeur de l'action
+     * @param actionCompose l'action à vendre
+     * @param quantity la quantité à vendre
      * @return true si la vente a été effectuée, false sinon
      */
     public boolean sellActionCompose( ActionCompose actionCompose, int quantity) {
