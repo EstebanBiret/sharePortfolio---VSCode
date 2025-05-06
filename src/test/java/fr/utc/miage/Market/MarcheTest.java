@@ -319,6 +319,21 @@ public class MarcheTest {
     }
 
     @Test
+    void testGetActionByLibelle() {
+        //GIVEN
+        Marche marche = new Marche();
+        Marche.getActionsAvailable().put(ACTION1, 20);
+        Marche.getActionsAvailable().put(ACTION2, 50);
+
+        // WHEN
+        Action action = Marche.getActionByLibelle("Action1");
+
+        // THEN
+        assertEquals(ACTION1, action);
+        Marche.clearActionsAvailable();
+    }
+  
+    @Test
     void testIsActionAvailableWithQuantityFalseNotPresent() {
         // GIVEN
         // Ne pas insérer d’action dans le marché
@@ -328,6 +343,21 @@ public class MarcheTest {
 
         // THEN
         Assertions.assertFalse(result);
+        Marche.clearActionsAvailable();
+    }
+
+    @Test
+    void testGetActionByLibelleNotFound() {
+        //GIVEN
+        Marche marche = new Marche();
+        Marche.getActionsAvailable().put(ACTION1, 20);
+        Marche.getActionsAvailable().put(ACTION2, 50);
+
+        // WHEN
+        Action action = Marche.getActionByLibelle("Action3");
+
+        // THEN
+        assertEquals(null, action);
         Marche.clearActionsAvailable();
     }
 
