@@ -108,6 +108,20 @@ public class Marche {
     }
 
     /**
+     * Get an action by its libelle
+     * @param libelle the libelle of the action to get
+     * @return the action with the given libelle, null if not found
+     */
+    public static Action getActionByLibelle(String libelle) {
+        for (Action action : actionsAvailable.keySet()) {
+            if (action.getLibelle().equals(libelle)) {
+                return action;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Clear the actions available on the market
      */
     public static void clearActionsAvailable() {
