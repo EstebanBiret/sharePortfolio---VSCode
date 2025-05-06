@@ -16,7 +16,14 @@
 
 package fr.utc.miage.Acteurs;
 
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import fr.utc.miage.Market.Marche;
+import fr.utc.miage.Market.Transaction;
 import fr.utc.miage.shares.Action;
 
 /**
@@ -77,6 +84,56 @@ public class Gestionnaire extends Personne {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Calculates and returns a formatted string showing the most traded action
+     * for each day, month, or year based on the given period.
+     *
+     * @param transactions the list of all transactions
+     * @param periode  "jour", "mois", or "annee"
+     * @return a formatted string showing the most traded action for each period
+     */
+    public String consultBestAction(List<Transaction> transactions, String periode) {
+        if (transactions == null || transactions.isEmpty()) {
+            return "No transactions found.";
+        }
+        
+        DateTimeFormatter formatter = switch (periode.toLowerCase()) {
+            case "jour" -> DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            case "mois" -> DateTimeFormatter.ofPattern("yyyy-MM");
+            case "annee" -> DateTimeFormatter.ofPattern("yyyy");
+            default -> throw new IllegalArgumentException("Invalid period: must be 'jour', 'mois', or 'annee'");
+         };
+
+        Map<String, Map<Action, Integer>> grouped = new HashMap<>();
+
+        for (Transaction tx : transactions) {
+            String key = tx.getDate().format(formatter);
+            grouped.putIfAbsent(key, new HashMap<>());
+            Map<Action, Integer> subMap = grouped.get(key);
+            subMap.put(tx.getAction(), subMap.getOrDefault(tx.getAction(), 0) + tx.getQuantity());
+        }
+
+        StringBuilder result = new StringBuilder("Most traded actions by ").append(periode).append(":\n");
+
+        for (var entry : grouped.entrySet()) {
+            String date = entry.getKey();
+            Map<Action, Integer> actions = entry.getValue();
+
+            Action topAction = Collections.max(actions.entrySet(), Map.Entry.comparingByValue()).getKey();
+            int maxQuantity = actions.get(topAction);
+
+            result.append("- ")
+                .append(date)
+                .append(" : ")
+                .append(topAction.getLibelle())
+                .append(" (")
+                .append(maxQuantity)
+                .append(" unités)\n");
+        }
+
+        return result.toString();
     }
 
 }

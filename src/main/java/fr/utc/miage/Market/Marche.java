@@ -18,7 +18,6 @@ package fr.utc.miage.Market;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.stream.Stream;
 
 import fr.utc.miage.shares.Action;
@@ -159,33 +158,35 @@ public class Marche {
         ArrayList<Action> actions = new ArrayList<>();
         final String method = triMethod.toLowerCase();
 
-        Stream<Action> actionsStream = actionsAvailable.keySet().stream();
+        Stream<Action> actionsStream = actionsAvailable.keySet().stream();    
+        boolean validMethod = true;
+
         switch (method) {
-            case "nom":
+            case "nom" -> {
                 if (!isAscendant) {
                     actionsStream = actionsStream.sorted((a1, a2) -> -1 * a1.getLibelle().compareTo(a2.getLibelle()));
                 }
                 else actionsStream = actionsStream.sorted((a1, a2) -> a1.getLibelle().compareTo(a2.getLibelle()));
-                break;
-            case "quantite":
+            }
+            case "quantite" -> {
                 if (!isAscendant) {
                     actionsStream = actionsStream.sorted((a1, a2) -> -1 * actionsAvailable.get(a1).compareTo(actionsAvailable.get(a2)));
                 }
                 else actionsStream = actionsStream.sorted((a1, a2) -> actionsAvailable.get(a1).compareTo(actionsAvailable.get(a2)));
-                break;
-            case "prix":
+            }
+            case "prix" -> {
                 if (!isAscendant) {
                     actionsStream = actionsStream.sorted((a1, a2) -> -1 * Double.compare(a1.valeur(Jour.getActualJour()), a2.valeur(Jour.getActualJour())));
                 }
                 else actionsStream = actionsStream.sorted((a1, a2) -> Double.compare(a1.valeur(Jour.getActualJour()), a2.valeur(Jour.getActualJour())));
-                break;
-            default:
-                return new ArrayList<>();
+            }
+            default -> {
+                validMethod = false;
+            }
         }
 
+        if (!validMethod) return new ArrayList<>();
         actionsStream.forEach(actions::add);
-        
-        
         return actions;
     }
 
