@@ -157,4 +157,15 @@ public class Investisseur extends Personne {
         return true;
     }
 
+    /**
+     * Allows to consult the value of an action in the wallet for a given day
+     * @param actionSimple the action to consult
+     * @param jour the day to consult
+     * 
+     * @return the value of the action for the given day, 0 if the action has no value for the given day
+     */
+    public float getValueOfActionForGivenDay(ActionSimple actionSimple, Jour jour) {
+        return actionSimple.valeur(jour);
+    }
+
 }

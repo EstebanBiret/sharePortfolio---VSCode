@@ -75,7 +75,6 @@ public class Jour {
      * 
      */
     public static Jour getActualJour() {
-
         //on récupère le jour et l'année courante
         LocalDate currentDate = LocalDate.now();
         int jour = currentDate.getDayOfYear();
