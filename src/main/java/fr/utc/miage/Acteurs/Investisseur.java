@@ -17,6 +17,9 @@
 package fr.utc.miage.Acteurs;
 
 import fr.utc.miage.shares.Action;
+import fr.utc.miage.shares.ActionCompose;
+import fr.utc.miage.Market.Marche;
+import fr.utc.miage.shares.ActionSimple;
 import fr.utc.miage.shares.Jour;
 import fr.utc.miage.shares.Portefeuille;
 
@@ -28,12 +31,15 @@ import fr.utc.miage.shares.Portefeuille;
 
 public class Investisseur extends Personne {
 
-    
-
     /**
      * Balance of the investor
      */
     private float balance;
+
+    /**
+     * Wallet of the investor
+     */
+    private Portefeuille wallet;
 
 
     /**
@@ -41,18 +47,29 @@ public class Investisseur extends Personne {
      * @param nom the name of the investor
      * @param prenom the first name of the investor
      * @param password the password of the investor
-     * @param solde the balance of the investor
+     * @param balance the balance of the investor
      */
 
-    public Investisseur(String nom, String prenom, String password, float solde) {
+    public Investisseur(String nom, String prenom, String password, float balance) {
         super(nom, prenom, password);
-        this.balance = solde;
+        this.balance = balance;
+        this.wallet = new Portefeuille();
     }
-
-
-
   
+    /**
+     * Constructor of the Investisseur class
+     * @param nom the name of the investor
+     * @param prenom the first name of the investor
+     * @param password the password of the investor
+     * @param balance the balance of the investor
+     * @param wallet the wallet of the investor
+     */
 
+     public Investisseur(String nom, String prenom, String password, float balance, Portefeuille wallet) {
+        super(nom, prenom, password);
+        this.balance = balance;
+        this.wallet = wallet;
+    }
 
     /**
      * Allows to consult the balance of the investor
@@ -64,10 +81,18 @@ public class Investisseur extends Personne {
 
     /**
      * Allows to set the balance of the investor
-     * @param solde the balance of the investor
+     * @param balance the balance of the investor
      */
-    public void setBalance(float solde) {
-        balance = solde;
+    public void setBalance(float balance) {
+        this.balance = balance;
+    }
+
+    /**
+     * Allows to consult the wallet of the investor
+     * @return the wallet of the investor
+     */
+    public Portefeuille getWallet() {
+        return wallet;
     }
     
 /**
@@ -80,24 +105,31 @@ public class Investisseur extends Personne {
  * @param jour le jour pour évaluer la valeur de l'action
  * @return true si l’achat a été effectué, false sinon
  */
-public boolean buyAction(Portefeuille p, Action action, int quantite, Jour jour) {
-    if (quantite <= 0) {
-        throw new IllegalArgumentException("La quantité doit être positive.");
+public boolean buyActionCompose(ActionCompose actionSimple, int quantity) {
+     //on vérifie si l'action est disponible sur le marché avec la quantité demandée
+     if(Marche.isActionAvailableWithQuantity(actionSimple, quantity)) {
+
+        //récupérer la valeur de l'action pour le jour du système
+        Jour jour = Jour.getActualJour();
+        float value = actionSimple.valeur(jour);
+
+        //l'action n'a pas de valeur pour le jour actuel
+        if (value == 0) return false;
+
+        //on vérifie si l'investisseur a assez d'argent pour acheter l'action en quantité demandée
+        if (balance >= value * quantity) {
+            //on achète l'action
+            wallet.addAction(actionSimple, quantity);
+            //on retire le montant de l'achat du solde de l'investisseur
+            balance -= value * quantity;
+            //on retire l'action du marché
+            Marche.updateActionQuantity(actionSimple, quantity, false);
+            return true;
+        } else {
+            return false;
+        }
     }
-
-    float valeurTotale = action.valeur(jour) * quantite;
-
-    if (valeurTotale > getBalance()) {
-        return false; // Fonds insuffisants
-    }
-
-    boolean ajoutee = p.addAction(action, quantite);
-    if (ajoutee) {
-        setBalance(getBalance() - valeurTotale); // Déduction du solde
-        return true;
-    }
-
-    return false;
+    return false; //l'action n'est pas disponible sur le marché avec la quantité demandée
 }
 
 
@@ -111,23 +143,92 @@ public boolean buyAction(Portefeuille p, Action action, int quantite, Jour jour)
  * @param jour le jour auquel on évalue la valeur de l'action
  * @return true si la vente a été effectuée, false sinon
  */
-public boolean sellAction(Portefeuille portefeuille, Action action, int quantity, Jour jour) {
-    if (quantity <= 0) {
-        throw new IllegalArgumentException("La quantité doit être positive.");
-    }
+public boolean sellActionCompose( ActionCompose actionSimple, int quantity) {
+   // Vérifie que l'investisseur possède assez d'actions à vendre
+   if (wallet.getQuantity(actionSimple) < quantity) return false;
 
-    int currentQuantity = portefeuille.getQuantity(action);
-    if (currentQuantity < quantity) {
-        return false; 
-    }
+   // Récupère la valeur de l'action pour le jour actuel
+   Jour jour = Jour.getActualJour();
+   float value = actionSimple.valeur(jour);
 
-    float valeur = action.valeur(jour);
-    portefeuille.removeAction(action, quantity);
-    balance += valeur * quantity;
-    return true;
+   // Si la valeur est nulle, on ne peut pas vendre
+   if (value == 0) return false;
+
+   // Ajoute l'argent au solde de l'investisseur
+   balance += value * quantity;
+
+   // Retire les actions du portefeuille
+   wallet.removeAction(actionSimple, quantity);
+
+   // Ajoute les actions sur le marché
+   Marche.updateActionQuantity(actionSimple, quantity, true);
+
+   return true;
 }
 
 
 
+    /**
+     * Allows to buy an action
+     * @param actionSimple the action to buy
+     * @param quantity the quantity of actions to buy
+     * @return true if the purchase was made, false otherwise
+     */
+    public boolean buyActionSimple(ActionSimple actionSimple, int quantity) {
+        //on vérifie si l'action est disponible sur le marché avec la quantité demandée
+        if(Marche.isActionAvailableWithQuantity(actionSimple, quantity)) {
+
+            //récupérer la valeur de l'action pour le jour du système
+            Jour jour = Jour.getActualJour();
+            float value = actionSimple.valeur(jour);
+
+            //l'action n'a pas de valeur pour le jour actuel
+            if (value == 0) return false;
+
+            //on vérifie si l'investisseur a assez d'argent pour acheter l'action en quantité demandée
+            if (balance >= value * quantity) {
+                //on achète l'action
+                wallet.addAction(actionSimple, quantity);
+                //on retire le montant de l'achat du solde de l'investisseur
+                balance -= value * quantity;
+                //on retire l'action du marché
+                Marche.updateActionQuantity(actionSimple, quantity, false);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false; //l'action n'est pas disponible sur le marché avec la quantité demandée
+    }
+
+
+    /**
+     * Allows to sell an action
+     * @param actionSimple the action to sell
+     * @param quantity the quantity of actions to sell
+     * @return true if the sale was made, false otherwise
+     */
+    public boolean sellActionSimple(ActionSimple actionSimple, int quantity) {
+        // Vérifie que l'investisseur possède assez d'actions à vendre
+        if (wallet.getQuantity(actionSimple) < quantity) return false;
+
+        // Récupère la valeur de l'action pour le jour actuel
+        Jour jour = Jour.getActualJour();
+        float value = actionSimple.valeur(jour);
+
+        // Si la valeur est nulle, on ne peut pas vendre
+        if (value == 0) return false;
+
+        // Ajoute l'argent au solde de l'investisseur
+        balance += value * quantity;
+
+        // Retire les actions du portefeuille
+        wallet.removeAction(actionSimple, quantity);
+
+        // Ajoute les actions sur le marché
+        Marche.updateActionQuantity(actionSimple, quantity, true);
+
+        return true;
+    }
 
 }
