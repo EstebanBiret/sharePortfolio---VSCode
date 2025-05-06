@@ -16,7 +16,10 @@
 
 package fr.utc.miage.Acteurs;
 
+import java.util.Map;
+
 import fr.utc.miage.Market.Marche;
+import fr.utc.miage.shares.Action;
 import fr.utc.miage.shares.ActionSimple;
 import fr.utc.miage.shares.Jour;
 import fr.utc.miage.shares.Portefeuille;
@@ -166,6 +169,20 @@ public class Investisseur extends Personne {
      */
     public float getValueOfActionForGivenDay(ActionSimple actionSimple, Jour jour) {
         return actionSimple.valeur(jour);
+    }
+
+    /**
+     * Get total value of the wallet
+     * @return the total value of the wallet
+     */
+
+    public float getTotalValueOfWallet() {
+        float totalValue = 0;
+        for (Map.Entry<Action,Integer> entry : wallet.getActions().entrySet()) {
+            Action action = entry.getKey();
+            totalValue += action.valeur(Jour.getActualJour()) * wallet.getQuantity(action);
+        }
+        return totalValue;
     }
 
 }
