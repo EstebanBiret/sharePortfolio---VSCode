@@ -16,6 +16,7 @@
 
 package fr.utc.miage.Acteurs;
 
+import fr.utc.miage.Market.Marche;
 import fr.utc.miage.shares.Action;
 
 /**
@@ -38,12 +39,18 @@ public class Gestionnaire extends Personne {
     /**
      * Allows to create an action
      * @param action the name of the action
-     * @return true if the action was created, false otherwise
+     * @param quantity the quantity of actions to create
      */
-    public boolean createAction(Action action) {
-        // TODO Auto-generated method stub
-        return false;
+    public void createAction(Action action, int quantity) {
+        if(Marche.getActionsAvailable().containsKey(action)) {
+            // If the action already exists, we update its quantity
+            int currentQuantity = Marche.getActionsAvailable().get(action);
+            Marche.getActionsAvailable().put(action, currentQuantity + quantity);
+        } else {
+            Marche.getActionsAvailable().put(action, quantity);
+        } 
     }
+
     /**
      * Allows to delete an action
      * @param action the name of the action
@@ -51,19 +58,25 @@ public class Gestionnaire extends Personne {
      */
 
     public boolean deleteAction(Action action) {
-        // TODO Auto-generated method stub
-        return false;
+        if (Marche.getActionsAvailable().containsKey(action)) {
+        Marche.getActionsAvailable().remove(action);
+        return true;
+    }
+    return false;
     }
      /**
      * Allows to update an action
      * @param action the name of the action
+     * @param quantity the quantity of actions to update
      * @return true if the action was updated   , false otherwise
      */
-
-    public boolean updateActionSimple(Action action) {
-        // TODO Auto-generated method stub
+    public boolean updateAction(Action action, int quantity) {
+        if (action == null) return false;
+        if (Marche.getActionsAvailable().containsKey(action)) {
+            Marche.getActionsAvailable().put(action, quantity);
+            return true;
+        }
         return false;
     }
-
 
 }
