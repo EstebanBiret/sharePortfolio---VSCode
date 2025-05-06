@@ -17,6 +17,7 @@
 
 package fr.utc.miage.Acteurs;
 
+import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -24,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.time.LocalDateTime;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import fr.utc.miage.Market.Transaction;
@@ -49,8 +49,8 @@ public class GestionnaireTest {
         Gestionnaire gestionnaire = new Gestionnaire(NAME_GESTIONNAIRE1,FIRST_NAME_GESTIONNAIRE1,PASSWORD_GESTIONNAIRE1);
         //THEN
         Assertions.assertAll(
-            () -> Assertions.assertEquals(gestionnaire.getName(), NAME_GESTIONNAIRE1),
-            () -> Assertions.assertEquals(gestionnaire.getFirstName(), FIRST_NAME_GESTIONNAIRE1)
+            () -> Assertions.assertEquals(NAME_GESTIONNAIRE1, gestionnaire.getName()),
+            () -> Assertions.assertEquals(FIRST_NAME_GESTIONNAIRE1, gestionnaire.getFirstName())
         );
     }
 

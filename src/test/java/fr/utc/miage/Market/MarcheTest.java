@@ -19,17 +19,23 @@ package fr.utc.miage.Market;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import fr.utc.miage.shares.ActionSimple;
-
+import fr.utc.miage.shares.Jour;
 import fr.utc.miage.shares.Action;
 
 public class MarcheTest {
     private final Action ACTION1 = new ActionSimple("Action1");
     private final Action ACTION2 = new ActionSimple("Action2");
+
+    private final Action ACTION3 = new ActionSimple("Action3");
+    private final Action ACTION4 = new ActionSimple("Action4");
+    private final Action ACTION5 = new ActionSimple("Action5");
 
     @Test
     void testAfficheActionAvailable() {
@@ -111,6 +117,176 @@ public class MarcheTest {
         // THEN
         assertEquals(20, actionsAvailable.get(ACTION1));
         assertEquals(50, actionsAvailable.get(ACTION2));
+        Marche.clearActionsAvailable();
+
+    }
+
+    @Test
+    void testTriActionsAvalablesWithNameAsc(){
+        //GIVEN
+        Marche.getActionsAvailable().put(ACTION2, 20);
+        Marche.getActionsAvailable().put(ACTION1, 50);
+        Marche.getActionsAvailable().put(ACTION3, 10);
+        Marche.getActionsAvailable().put(ACTION5, 5);
+        Marche.getActionsAvailable().put(ACTION4, 15);
+
+        // WHEN
+        ArrayList<Action> actions = Marche.triActionsAvailable("nom",true);
+
+        // THEN
+        Assertions.assertAll(
+            () -> assertEquals(ACTION1, actions.get(0)),
+            () -> assertEquals(ACTION2, actions.get(1)),
+            () -> assertEquals(ACTION3, actions.get(2)),
+            () -> assertEquals(ACTION4, actions.get(3)),
+            () -> assertEquals(ACTION5, actions.get(4))
+        );
+
+        Marche.clearActionsAvailable();
+
+    }
+    @Test
+    void testTriActionsAvalablesWithNameDsc(){
+        //GIVEN
+        Marche.getActionsAvailable().put(ACTION2, 20);
+        Marche.getActionsAvailable().put(ACTION1, 50);
+        Marche.getActionsAvailable().put(ACTION3, 10);
+        Marche.getActionsAvailable().put(ACTION5, 5);
+        Marche.getActionsAvailable().put(ACTION4, 15);
+
+        // WHEN
+        ArrayList<Action> actions = Marche.triActionsAvailable("nom",false);
+
+        // THEN
+        Assertions.assertAll(
+            () -> assertEquals(ACTION1, actions.get(4)),
+            () -> assertEquals(ACTION2, actions.get(3)),
+            () -> assertEquals(ACTION3, actions.get(2)),
+            () -> assertEquals(ACTION4, actions.get(1)),
+            () -> assertEquals(ACTION5, actions.get(0))
+        );
+        Marche.clearActionsAvailable();
+
+    }
+
+    @Test
+    void testTriActionsAvalablesWithQuantityAsc(){
+        //GIVEN
+        Marche.getActionsAvailable().put(ACTION2, 20);
+        Marche.getActionsAvailable().put(ACTION1, 50);
+        Marche.getActionsAvailable().put(ACTION3, 10);
+        Marche.getActionsAvailable().put(ACTION5, 5);
+        Marche.getActionsAvailable().put(ACTION4, 15);
+
+        // WHEN
+        ArrayList<Action> actions = Marche.triActionsAvailable("quantite",true);
+
+        // THEN
+        Assertions.assertAll(
+            () -> assertEquals(ACTION5, actions.get(0)),
+            () -> assertEquals(ACTION3, actions.get(1)),
+            () -> assertEquals(ACTION4, actions.get(2)),
+            () -> assertEquals(ACTION2, actions.get(3)),
+            () -> assertEquals(ACTION1, actions.get(4))
+        );
+        Marche.clearActionsAvailable();
+
+    }
+    @Test
+    void testTriActionsAvalablesWithQuantityDsc(){
+        //GIVEN
+        Marche.getActionsAvailable().put(ACTION2, 20);
+        Marche.getActionsAvailable().put(ACTION1, 50);
+        Marche.getActionsAvailable().put(ACTION3, 10);
+        Marche.getActionsAvailable().put(ACTION5, 5);
+        Marche.getActionsAvailable().put(ACTION4, 15);
+
+        // WHEN
+        ArrayList<Action> actions = Marche.triActionsAvailable("quantite",false);
+
+        // THEN
+        Assertions.assertAll(
+            () -> assertEquals(ACTION5, actions.get(4)),
+            () -> assertEquals(ACTION3, actions.get(3)),
+            () -> assertEquals(ACTION4, actions.get(2)),
+            () -> assertEquals(ACTION2, actions.get(1)),
+            () -> assertEquals(ACTION1, actions.get(0))
+        );
+        Marche.clearActionsAvailable();
+
+    }
+
+    @Test
+    void testTriActionsSimpleAvalablesWithPriceAsc(){
+        //GIVEN
+        
+        ActionSimple actionSimple1 = new ActionSimple("Action1");
+        ActionSimple actionSimple2 = new ActionSimple("Action2");
+        ActionSimple actionSimple3 = new ActionSimple("Action3");
+        ActionSimple actionSimple4 = new ActionSimple("Action4");
+        ActionSimple actionSimple5 = new ActionSimple("Action5");
+
+        actionSimple1.enrgCours(Jour.getActualJour(), 10.0f);
+        actionSimple2.enrgCours(Jour.getActualJour(), 20.0f);
+        actionSimple3.enrgCours(Jour.getActualJour(), 30.0f);
+        actionSimple4.enrgCours(Jour.getActualJour(), 40.0f);
+        actionSimple5.enrgCours(Jour.getActualJour(), 50.0f);
+        
+        Marche.getActionsAvailable().put(actionSimple2, 20);
+        Marche.getActionsAvailable().put(actionSimple1, 50);
+        Marche.getActionsAvailable().put(actionSimple4, 10);
+        Marche.getActionsAvailable().put(actionSimple5, 5);
+        Marche.getActionsAvailable().put(actionSimple3, 15);
+
+        // WHEN
+        ArrayList<Action> actions = Marche.triActionsAvailable("prix",true);
+
+        // THEN
+        Assertions.assertAll(
+            () -> assertEquals(actionSimple1, actions.get(0)),
+            () -> assertEquals(actionSimple2, actions.get(1)),
+            () -> assertEquals(actionSimple3, actions.get(2)),
+            () -> assertEquals(actionSimple4, actions.get(3)),
+            () -> assertEquals(actionSimple5, actions.get(4))
+        );
+        Marche.clearActionsAvailable();
+
+    }
+
+    @Test
+    void testTriActionsSimpleAvalablesWithPriceDsc(){
+        //GIVEN
+        
+        ActionSimple actionSimple1 = new ActionSimple("Action1");
+        ActionSimple actionSimple2 = new ActionSimple("Action2");
+        ActionSimple actionSimple3 = new ActionSimple("Action3");
+        ActionSimple actionSimple4 = new ActionSimple("Action4");
+        ActionSimple actionSimple5 = new ActionSimple("Action5");
+
+        actionSimple1.enrgCours(Jour.getActualJour(), 10.0f);
+        actionSimple2.enrgCours(Jour.getActualJour(), 20.0f);
+        actionSimple3.enrgCours(Jour.getActualJour(), 30.0f);
+        actionSimple4.enrgCours(Jour.getActualJour(), 40.0f);
+        actionSimple5.enrgCours(Jour.getActualJour(), 50.0f);
+        
+        Marche.getActionsAvailable().put(actionSimple2, 20);
+        Marche.getActionsAvailable().put(actionSimple1, 50);
+        Marche.getActionsAvailable().put(actionSimple4, 10);
+        Marche.getActionsAvailable().put(actionSimple5, 5);
+        Marche.getActionsAvailable().put(actionSimple3, 15);
+
+        // WHEN
+        ArrayList<Action> actions = Marche.triActionsAvailable("prix",false);
+
+        // THEN
+        Assertions.assertAll(
+            () -> assertEquals(actionSimple5, actions.get(0)),
+            () -> assertEquals(actionSimple4, actions.get(1)),
+            () -> assertEquals(actionSimple3, actions.get(2)),
+            () -> assertEquals(actionSimple2, actions.get(3)),
+            () -> assertEquals(actionSimple1, actions.get(4))
+        );
+        Marche.clearActionsAvailable();
 
     }
 }
