@@ -17,6 +17,7 @@
 package fr.utc.miage.Acteurs;
 
 import Market.Marche;
+import fr.utc.miage.shares.Action;
 import fr.utc.miage.shares.ActionSimple;
 import fr.utc.miage.shares.Jour;
 import fr.utc.miage.shares.Portefeuille;
@@ -117,6 +118,8 @@ public class Investisseur extends Personne {
                 wallet.addAction(actionSimple, quantity);
                 //on retire le montant de l'achat du solde de l'investisseur
                 balance -= value * quantity;
+                //on retire l'action du marché
+                Marche.updateActionQuantity(actionSimple, quantity, false);
                 return true;
             } else {
                 return false;

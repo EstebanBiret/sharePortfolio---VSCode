@@ -77,4 +77,27 @@ public class Marche {
         return false;
     }
 
+    /**
+     * update the quantity of an action on the market
+     * @param action the action to update
+     * @param quantity the quantity of the action to update
+     * @param isIncrease true if the quantity is increased, false if it is decreased
+     * @return true if the action is updated, false otherwise
+     */
+    public static boolean updateActionQuantity(Action action, int quantity, boolean isIncrease) {
+        if (actionsAvailable.containsKey(action)) {
+            if (isIncrease) {
+                actionsAvailable.put(action, actionsAvailable.get(action) + quantity);
+            } else {
+                if (actionsAvailable.get(action) >= quantity) {
+                    actionsAvailable.put(action, actionsAvailable.get(action) - quantity);
+                } else {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
 }

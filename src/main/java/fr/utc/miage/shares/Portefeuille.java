@@ -23,7 +23,7 @@ public class Portefeuille {
 
     private Map <Action, Integer> actions;
 
-    /*
+    /**
      * Constructeur par défaut de la classe Portefeuille
      * Crée un portefeuille vide
      */
@@ -31,7 +31,7 @@ public class Portefeuille {
         this.actions = new HashMap<>();
     }
 
-    /*
+    /**
      * Constructeur de la classe Portefeuille
      * Crée un portefeuille avec une map d'actions
      * @param actions : Map d'actions (simples et composées) et de leur quantité
@@ -41,7 +41,7 @@ public class Portefeuille {
     }
     
 
-    /*
+    /**
      * Récupérer la map d'actions du portefeuille
      * @return : Map d'actions (simples et composées) et de leur quantité
      */
@@ -49,7 +49,7 @@ public class Portefeuille {
         return actions;
     }
 
-    /*
+    /**
      * Définir la map d'actions du portefeuille
      * @param actions : Map d'actions (simples et composées) et de leur quantité
      */
@@ -57,7 +57,7 @@ public class Portefeuille {
         this.actions = actions;
     }
 
-    /*
+    /**
      * Ajouter une action au portefeuille en autant de quantité que nécessaire
      * @param action : Action à ajouter
      * @param quantity : Quantité d'actions à ajouter
@@ -74,7 +74,7 @@ public class Portefeuille {
         return true;
     }
 
-    /*
+    /**
      * Supprimer une action du portefeuille en autant de quantité que nécessaire
      * @param action : Action à supprimer
      * @param quantity : Quantité d'actions à supprimer
@@ -96,7 +96,7 @@ public class Portefeuille {
         return action;
     }
 
-    /*
+    /**
      * Récupérer la quantité d'une action dans le portefeuille
      * @param action : Action dont on veut connaître la quantité
      * @return : La quantité d'actions dans le portefeuille

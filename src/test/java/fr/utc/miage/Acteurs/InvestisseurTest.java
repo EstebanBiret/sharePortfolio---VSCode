@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 Esteban BIRET-TOSCANO Flavien DIAS;
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package fr.utc.miage.Acteurs;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,12 +27,12 @@ import org.junit.jupiter.api.Test;
 import Market.Marche;
 
 import java.util.HashMap;
-import java.util.Map;
 
-public class InvestisseurTest {
+class InvestisseurTest {
 
     private Investisseur investisseur;
     private ActionSimple action;
+    private ActionSimple actionNoValue;
     private Marche marche;
     private Jour jour;
 
@@ -24,6 +40,7 @@ public class InvestisseurTest {
     void setUp() {
         investisseur = new Investisseur("John", "Doe", "password", 1000);
         action = new ActionSimple("Tisseo");
+        actionNoValue = new ActionSimple("airbus");
         jour = Jour.getActualJour();
 
         // Enregistre la valeur de l'action pour ce jour
@@ -32,24 +49,49 @@ public class InvestisseurTest {
         // Ajoute l'action au marché avec 10 exemplaires
         HashMap<Action, Integer> actions = new HashMap<>();
         actions.put(action, 10);
+        actions.put(actionNoValue, 10);
         marche = new Marche(actions);
     }
 
 
     @Test
-    void testBuyAction_Success() {
-        boolean result = investisseur.buyAction(action, 5);
-        assertTrue(result);
-        assertEquals(1000 - 150f * 5, investisseur.getBalance(), 0.01f);
-        assertEquals(5, investisseur.getWallet().getActions().get(action));
+    void testBuyActionSuccess() {
+        boolean result = investisseur.buyActionSimple(action, 5);
+        assertAll(
+                () -> assertTrue(result),
+                () -> assertEquals(1000 - 150 * 5, investisseur.getBalance()),
+                () -> assertEquals(5, investisseur.getWallet().getActions().get(action)),
+                () -> assertEquals(5, marche.getActionsAvailable().get(action))
+        );
+    }
+
+   @Test
+    void testBuyActionInsufficientQuantityMarket() {
+        boolean result = investisseur.buyActionSimple(action, 20);
+        assertAll(
+                () -> assertFalse(result),
+                () -> assertEquals(1000, investisseur.getBalance()),
+                () -> assertFalse(investisseur.getWallet().getActions().containsKey(action)),
+                () -> assertEquals(10, marche.getActionsAvailable().get(action))
+        );
     }
 
     @Test
-    void testBuyAction_InsufficientBalance() {
-        investisseur.setBalance(100f);
-        boolean result = investisseur.buyAction(action, 1);
+    void testBuyActionNotValueForActualDay() {
+        boolean result = investisseur.buyActionSimple(actionNoValue, 5);
+        assertAll(
+                () -> assertFalse(result),
+                () -> assertEquals(1000, investisseur.getBalance()),
+                () -> assertFalse(investisseur.getWallet().getActions().containsKey(actionNoValue)),
+                () -> assertEquals(10, marche.getActionsAvailable().get(actionNoValue))
+        );
+    }
+
+    @Test
+    void testBuyActionInsufficientBalance() {
+        investisseur.setBalance(100);
+        boolean result = investisseur.buyActionSimple(action, 5);
         assertFalse(result);
-        assertEquals(100f, investisseur.getBalance(), 0.01f);
     }
 
     // Autres tests...
