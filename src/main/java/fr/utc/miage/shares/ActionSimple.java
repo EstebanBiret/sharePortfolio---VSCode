@@ -25,12 +25,21 @@ import java.util.Map;
  */
 public class ActionSimple extends Action {
 
+    /**
+     * Default value for the action object.
+     */
     private static final int DEFAULT_ACTION_VALUE = 0;
 
-    // attribut lien
+    /**
+     * Map of the action object and its value for each day.
+     */
     private final Map<Jour, Float> mapCours;
 
-    // constructeur
+    /**
+     * Constructor of the ActionSimple class.
+     * 
+     * @param libelle the name of the action object
+     */
     public ActionSimple(final String libelle) {
         // Action simple initialisée comme 1 action
         super(libelle);
@@ -38,13 +47,26 @@ public class ActionSimple extends Action {
         this.mapCours = new HashMap<>();
     }
 
-    // enrg possible si pas de cours pour ce jour
+    /**
+     * Adds a value to the action object for a given day.
+     * If the value is already set for this day, it is not modified.
+     * 
+     * @param j the day for which the value is set
+     * @param v the value of the action for the given day
+     */
     public void enrgCours(final Jour j, final float v) {
         if (!this.mapCours.containsKey(j)) {
             this.mapCours.put(j, v);
         }
     }
 
+    /**
+     * Provides the value of the action object for a given day.
+     * If the value is not set for this day, the default value is returned.
+     * 
+     * @param j the day for which the value is requested
+     * @return the value of the action for the given day
+     */
     @Override
     public float valeur(final Jour j) {
         if (this.mapCours.containsKey(j)) {
