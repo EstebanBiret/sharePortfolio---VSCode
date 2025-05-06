@@ -16,7 +16,7 @@
 
 package fr.utc.miage.Acteurs;
 
-import Market.Marche;
+import fr.utc.miage.Market.Marche;
 import fr.utc.miage.shares.Action;
 import fr.utc.miage.shares.ActionSimple;
 import fr.utc.miage.shares.Jour;
