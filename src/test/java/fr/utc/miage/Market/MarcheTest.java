@@ -19,6 +19,8 @@ package fr.utc.miage.Market;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashMap;
+
 import org.junit.jupiter.api.Test;
 
 import fr.utc.miage.shares.ActionSimple;
@@ -63,7 +65,8 @@ public class MarcheTest {
     @Test
     void testAfficheActionAvailableEmpty() {
         //GIVEN
-        Marche marche = new Marche();
+        HashMap<Action, Integer> actionsAvailable = new HashMap<>();
+        Marche marche = new Marche(actionsAvailable);
 
         // WHEN
         String result = marche.displaysActionAvailable();
@@ -73,17 +76,41 @@ public class MarcheTest {
         Marche.clearActionsAvailable();
     }
 
+    
+
 
 
 
 
     @Test
     void testClearActionsAvailable() {
+        //GIVEN
+        Marche marche = new Marche();
+        Marche.getActionsAvailable().put(ACTION1, 20);
+        Marche.getActionsAvailable().put(ACTION2, 50);
+
+        // WHEN
+        Marche.clearActionsAvailable();
+
+        // THEN
+        assertTrue(Marche.getActionsAvailable().isEmpty());
 
     }
 
     @Test
     void testGetActionsAvailable() {
+
+        //GIVEN
+        Marche marche = new Marche();
+        Marche.getActionsAvailable().put(ACTION1, 20);
+        Marche.getActionsAvailable().put(ACTION2, 50);
+
+        // WHEN
+        HashMap<Action, Integer> actionsAvailable = Marche.getActionsAvailable();
+
+        // THEN
+        assertEquals(20, actionsAvailable.get(ACTION1));
+        assertEquals(50, actionsAvailable.get(ACTION2));
 
     }
 }
