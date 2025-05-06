@@ -37,11 +37,13 @@ class InvestisseurTest {
     private ActionSimple action;
     private ActionSimple actionDejaPossedee;
     private ActionSimple actionNoValue;
+    @SuppressWarnings("unused")
     private Marche marche;
     private Jour jour;
     private Portefeuille portefeuille;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setUp() {
         HashMap<Action, Integer> actionsPossedees = new HashMap<>();
         actionDejaPossedee = new ActionSimple("france2");
@@ -86,6 +88,13 @@ class InvestisseurTest {
                 () -> assertEquals(1000, investisseurTest.getBalance()),
                 () -> assertEquals(wallet, investisseurTest.getWallet())
         );
+    }
+
+    @Test
+    void testSetWallet() {
+        Portefeuille newWallet = new Portefeuille();
+        investisseur.setWallet(newWallet);
+        assertEquals(newWallet, investisseur.getWallet());
     }
 
     @Test
