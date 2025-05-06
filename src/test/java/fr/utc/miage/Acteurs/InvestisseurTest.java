@@ -16,14 +16,7 @@
 
 package fr.utc.miage.Acteurs;
 
-import java.util.HashMap;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import fr.utc.miage.Market.Marche;
 import fr.utc.miage.shares.Action;
@@ -31,53 +24,70 @@ import fr.utc.miage.shares.ActionSimple;
 import fr.utc.miage.shares.Jour;
 import fr.utc.miage.shares.Portefeuille;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+
+import java.util.HashMap;
+
 class InvestisseurTest {
 
     private Investisseur investisseur;
     private ActionSimple action;
+    private ActionSimple actionDejaPossedee;
     private ActionSimple actionNoValue;
     private Marche marche;
     private Jour jour;
+    private Portefeuille portefeuille;
 
     @BeforeEach
     void setUp() {
-        investisseur = new Investisseur("John", "Doe", "password", 1000);
+        HashMap<Action, Integer> actionsPossedees = new HashMap<>();
+        actionDejaPossedee = new ActionSimple("france2");
+        actionsPossedees.put(actionDejaPossedee, 5);
+        portefeuille = new Portefeuille(actionsPossedees);
+        investisseur = new Investisseur("John", "Doe", "password", 1000, portefeuille);
         action = new ActionSimple("Tisseo");
         actionNoValue = new ActionSimple("airbus");
         jour = Jour.getActualJour();
 
         // Enregistre la valeur de l'action pour ce jour
         action.enrgCours(jour, 150);
+        actionDejaPossedee.enrgCours(jour, 50);
 
         // Ajoute l'action au marché avec 10 exemplaires
         HashMap<Action, Integer> actions = new HashMap<>();
         actions.put(action, 10);
+        actions.put(actionDejaPossedee, 10);
         actions.put(actionNoValue, 10);
         marche = new Marche(actions);
     }
 
     @Test 
     void constructorShouldWork() {
+        Investisseur investisseurTest = new Investisseur("John", "Doe", "password", 1000);
         assertAll(
-                () -> assertEquals("John", investisseur.getName()),
-                () -> assertEquals("Doe", investisseur.getFirstName()),
-                () -> assertEquals("password", investisseur.getPassword()),
-                () -> assertEquals(1000, investisseur.getBalance())
+                () -> assertEquals("John", investisseurTest.getName()),
+                () -> assertEquals("Doe", investisseurTest.getFirstName()),
+                () -> assertEquals("password", investisseurTest.getPassword()),
+                () -> assertEquals(1000, investisseurTest.getBalance())
         );
     }
 
     @Test
-    void constructorWithWalletTest() {
+    void constructorWithWalletShouldWork() {
         Portefeuille wallet = new Portefeuille();
-        investisseur = new Investisseur("John", "Doe", "password", 1000, wallet);
+        Investisseur investisseurTest = new Investisseur("John", "Doe", "password", 1000, wallet);
         assertAll(
-                () -> assertEquals("John", investisseur.getName()),
-                () -> assertEquals("Doe", investisseur.getFirstName()),
-                () -> assertEquals("password", investisseur.getPassword()),
-                () -> assertEquals(1000, investisseur.getBalance()),
-                () -> assertEquals(wallet, investisseur.getWallet())
+                () -> assertEquals("John", investisseurTest.getName()),
+                () -> assertEquals("Doe", investisseurTest.getFirstName()),
+                () -> assertEquals("password", investisseurTest.getPassword()),
+                () -> assertEquals(1000, investisseurTest.getBalance()),
+                () -> assertEquals(wallet, investisseurTest.getWallet())
         );
     }
+
+
 
     @Test
     void testBuyActionSuccess() {
@@ -86,7 +96,7 @@ class InvestisseurTest {
                 () -> assertTrue(result),
                 () -> assertEquals(1000 - 150 * 5, investisseur.getBalance()),
                 () -> assertEquals(5, investisseur.getWallet().getActions().get(action)),
-                () -> assertEquals(5, marche.getActionsAvailable().get(action))
+                () -> assertEquals(5, Marche.getActionsAvailable().get(action))
         );
     }
 
@@ -97,7 +107,7 @@ class InvestisseurTest {
                 () -> assertFalse(result),
                 () -> assertEquals(1000, investisseur.getBalance()),
                 () -> assertFalse(investisseur.getWallet().getActions().containsKey(action)),
-                () -> assertEquals(10, marche.getActionsAvailable().get(action))
+                () -> assertEquals(10, Marche.getActionsAvailable().get(action))
         );
     }
 
@@ -108,7 +118,7 @@ class InvestisseurTest {
                 () -> assertFalse(result),
                 () -> assertEquals(1000, investisseur.getBalance()),
                 () -> assertFalse(investisseur.getWallet().getActions().containsKey(actionNoValue)),
-                () -> assertEquals(10, marche.getActionsAvailable().get(actionNoValue))
+                () -> assertEquals(10, Marche.getActionsAvailable().get(actionNoValue))
         );
     }
 
@@ -116,11 +126,40 @@ class InvestisseurTest {
     void testBuyActionInsufficientBalance() {
         investisseur.setBalance(100);
         boolean result = investisseur.buyActionSimple(action, 5);
+        assertFalse(result);
+    }
+
+    @Test
+    void testSellActionSuccess() {
+        boolean result = investisseur.sellActionSimple(actionDejaPossedee, 3);
+        assertAll(
+                () -> assertTrue(result),
+                () -> assertEquals(1000 + 3 * actionDejaPossedee.valeur(jour), investisseur.getBalance()),
+                () -> assertEquals(2, investisseur.getWallet().getActions().get(actionDejaPossedee)),
+                () -> assertEquals(13, Marche.getActionsAvailable().get(actionDejaPossedee))
+        );
+    }
+
+    @Test
+    void testSellActionNotOwnedOrInsufisantQuantity() {
+        boolean result = investisseur.sellActionSimple(action, 3);
         assertAll(
                 () -> assertFalse(result),
-                () -> assertEquals(100, investisseur.getBalance()),
+                () -> assertEquals(1000, investisseur.getBalance()),
                 () -> assertFalse(investisseur.getWallet().getActions().containsKey(action)),
-                () -> assertEquals(10, marche.getActionsAvailable().get(action))
+                () -> assertEquals(10, Marche.getActionsAvailable().get(action))
+        );
+    }
+
+    @Test
+    void testSellActionNotValueForActualDay() {
+        investisseur.getWallet().addAction(actionNoValue, 5);
+        boolean result = investisseur.sellActionSimple(actionNoValue, 5);
+        assertAll(
+                () -> assertFalse(result),
+                () -> assertEquals(1000, investisseur.getBalance()),
+                () -> assertTrue(investisseur.getWallet().getActions().containsKey(actionNoValue)),
+                () -> assertEquals(10, Marche.getActionsAvailable().get(actionNoValue))
         );
     }
 
