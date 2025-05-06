@@ -16,9 +16,13 @@
 
 package fr.utc.miage.Market;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Stream;
 
 import fr.utc.miage.shares.Action;
+import fr.utc.miage.shares.Jour;
 
 /**
  * This class represents an action market.
@@ -126,8 +130,49 @@ public class Marche {
                                 .append(quantity)
                                 .append(" unités\n")
     );
-    System.out.println(result.toString());
     return result.toString();
+    }
+
+    /**
+     * Sorts the actions available on the market according to a given method.
+     * @param triMethod the method to sort the actions either by "nom", "quantite" or "prix"
+     * @param isAscendant true if the sorting is ascending, false if it is descending
+     * @return a list of actions sorted according to the given method
+     */
+    public static ArrayList<Action> triActionsAvailable(String triMethod, boolean isAscendant) {
+        if (actionsAvailable.isEmpty()) return new ArrayList<>();
+
+        ArrayList<Action> actions = new ArrayList<>();
+        final String method = triMethod.toLowerCase();
+
+        Stream<Action> actionsStream = actionsAvailable.keySet().stream();
+        switch (method) {
+            case "nom":
+                if (!isAscendant) {
+                    actionsStream = actionsStream.sorted((a1, a2) -> -1 * a1.getLibelle().compareTo(a2.getLibelle()));
+                }
+                else actionsStream = actionsStream.sorted((a1, a2) -> a1.getLibelle().compareTo(a2.getLibelle()));
+                break;
+            case "quantite":
+                if (!isAscendant) {
+                    actionsStream = actionsStream.sorted((a1, a2) -> -1 * actionsAvailable.get(a1).compareTo(actionsAvailable.get(a2)));
+                }
+                else actionsStream = actionsStream.sorted((a1, a2) -> actionsAvailable.get(a1).compareTo(actionsAvailable.get(a2)));
+                break;
+            case "prix":
+                if (!isAscendant) {
+                    actionsStream = actionsStream.sorted((a1, a2) -> -1 * Double.compare(a1.valeur(Jour.getActualJour()), a2.valeur(Jour.getActualJour())));
+                }
+                else actionsStream = actionsStream.sorted((a1, a2) -> Double.compare(a1.valeur(Jour.getActualJour()), a2.valeur(Jour.getActualJour())));
+                break;
+            default:
+                return new ArrayList<>();
+        }
+
+        actionsStream.forEach(actions::add);
+        
+        
+        return actions;
     }
 
 }
