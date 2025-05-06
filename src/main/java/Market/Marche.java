@@ -37,7 +37,7 @@ public class Marche {
      * Constructor of the Marche class
      */
     public Marche() {
-        this.actionsAvailable = new HashMap<>();
+        Marche.actionsAvailable = new HashMap<>();
     }
 
     /**
@@ -45,7 +45,7 @@ public class Marche {
      * @param actionsAvailable the actions available on the market
      */
     public Marche(HashMap<Action, Integer> actionsAvailable) {
-        this.actionsAvailable = actionsAvailable;
+        Marche.actionsAvailable = actionsAvailable;
     }
 
     /**
@@ -54,6 +54,27 @@ public class Marche {
      */
     public HashMap<Action, Integer> getActionsAvailable() {
         return actionsAvailable;
+    }
+
+    /**
+     * Set the actions available on the market
+     * @param actionsAvailable the actions available on the market
+     */
+    public void setActionsAvailable(HashMap<Action, Integer> actionsAvailable) {
+        Marche.actionsAvailable = actionsAvailable;
+    }
+
+    /**
+     * Allows to know if an action is available on the market with a given quantity
+     * @param action the action to check
+     * @param quantity the quantity of the action to check
+     * @return true if the action is available on the market with the given quantity, false otherwise
+     */
+    public static boolean isActionAvailableWithQuantity(Action action, int quantity) {
+        if (actionsAvailable.containsKey(action)) {
+            return actionsAvailable.get(action) >= quantity;
+        }
+        return false;
     }
 
 }

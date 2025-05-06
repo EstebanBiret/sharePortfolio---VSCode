@@ -16,7 +16,10 @@
 
 package fr.utc.miage.Acteurs;
 
-import fr.utc.miage.shares.Action;
+import Market.Marche;
+import fr.utc.miage.shares.ActionSimple;
+import fr.utc.miage.shares.Jour;
+import fr.utc.miage.shares.Portefeuille;
 
 /**
  * This class represents an investor.
@@ -26,12 +29,15 @@ import fr.utc.miage.shares.Action;
 
 public class Investisseur extends Personne {
 
-    
-
     /**
      * Balance of the investor
      */
     private float balance;
+
+    /**
+     * Wallet of the investor
+     */
+    private Portefeuille wallet;
 
 
     /**
@@ -42,36 +48,26 @@ public class Investisseur extends Personne {
      * @param solde the balance of the investor
      */
 
-    public Investisseur(String nom, String prenom, String password, float solde) {
+    public Investisseur(String nom, String prenom, String password, float balance) {
         super(nom, prenom, password);
-        this.balance = solde;
+        this.balance = balance;
+        this.wallet = new Portefeuille();
     }
 
     /**
-     * Allows to buy an action
-     * @param action the action to buy
-     * @param quantity the quantity of actions to buy
-     * @return true if the purchase was made, false otherwise
-     */
-    
-    public boolean buyAction(Action action, int quantity) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-
-    /**
-     * Allows to sell an action
-     * @param action the action to sell
-     * @param quantity the quantity of actions to sell
-     * @return true if the sale was made, false otherwise
+     * Constructor of the Investisseur class
+     * @param nom the name of the investor
+     * @param prenom the first name of the investor
+     * @param password the password of the investor
+     * @param solde the balance of the investor
+     * @param wallet the wallet of the investor
      */
 
-    public boolean vendreAction(Action action, int quantity) {
-        // TODO Auto-generated method stub
-        return false;
+     public Investisseur(String nom, String prenom, String password, float balance, Portefeuille wallet) {
+        super(nom, prenom, password);
+        this.balance = balance;
+        this.wallet = wallet;
     }
-
 
     /**
      * Allows to consult the balance of the investor
@@ -87,6 +83,59 @@ public class Investisseur extends Personne {
      */
     public void setBalance(float solde) {
         balance = solde;
+    }
+
+    /*
+     * Allows to consult the wallet of the investor
+     * @return the wallet of the investor
+     */
+    public Portefeuille getWallet() {
+        return wallet;
+    }
+
+    /**
+     * Allows to buy an action
+     * @param action the action to buy
+     * @param quantity the quantity of actions to buy
+     * @return true if the purchase was made, false otherwise
+     */
+    
+    public boolean buyActionSimple(ActionSimple actionSimple, int quantity) {
+        //on vérifie si l'action est disponible sur le marché avec la quantité demandée
+        if(Marche.isActionAvailableWithQuantity(actionSimple, quantity)) {
+
+            //récupérer la valeur de l'action pour le jour du système
+            Jour jour = Jour.getActualJour();
+            float value = actionSimple.valeur(jour);
+
+            //l'action n'a pas de valeur pour le jour actuel
+            if (value == 0) return false;
+
+            //on vérifie si l'investisseur a assez d'argent pour acheter l'action en quantité demandée
+            if (balance >= value * quantity) {
+                //on achète l'action
+                wallet.addAction(actionSimple, quantity);
+                //on retire le montant de l'achat du solde de l'investisseur
+                balance -= value * quantity;
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false; //l'action n'est pas disponible sur le marché avec la quantité demandée
+    }
+
+
+    /**
+     * Allows to sell an action
+     * @param action the action to sell
+     * @param quantity the quantity of actions to sell
+     * @return true if the sale was made, false otherwise
+     */
+
+    public boolean sellAction(Action action, int quantity) {
+        // TODO Auto-generated method stub
+        return false;
     }
     
 }

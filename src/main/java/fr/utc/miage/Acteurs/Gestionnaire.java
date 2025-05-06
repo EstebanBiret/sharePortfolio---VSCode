@@ -60,7 +60,7 @@ public class Gestionnaire extends Personne {
      * @return true if the action was updated   , false otherwise
      */
 
-    public boolean updateAction(Action action) {
+    public boolean updateActionSimple(Action action) {
         // TODO Auto-generated method stub
         return false;
     }

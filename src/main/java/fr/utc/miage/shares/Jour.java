@@ -15,6 +15,8 @@
  */
 package fr.utc.miage.shares;
 
+import java.time.LocalDate;
+
 /**
  * This class aims at describing a day based on a year and the day in this year.
  *
@@ -64,6 +66,21 @@ public class Jour {
      */
     public int getDay() {
         return day;
+    }
+
+    /**
+     * Returns the day of the year of the system date.
+     * 
+     * @return the Jour object
+     * 
+     */
+    public static Jour getActualJour() {
+
+        //on récupère le jour et l'année courante
+        LocalDate currentDate = LocalDate.now();
+        int jour = currentDate.getDayOfYear();
+        int annee = currentDate.getYear();
+        return new Jour(jour, annee);
     }
 
     @Override
