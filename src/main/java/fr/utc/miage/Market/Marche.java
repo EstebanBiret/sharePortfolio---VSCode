@@ -67,4 +67,20 @@ public class Marche {
         actionsAvailable.clear();
     }
 
+     /**
+     * Displays the actions available on the market.
+     * @return a string listing available actions and their quantites
+     */
+    public String displaysActionAvailable(){
+        var actions = this.getActionsAvailable();
+        if (actions.isEmpty()) return "Aucune action disponible sur le marché.";
+
+     String result = "Actions disponibles sur le marché:";
+    for (var entry : actions.entrySet()) {
+        result += "- " + entry.getKey().getLibelle() + " : " + entry.getValue() + " unités";
+    }
+    return result;
+        
+    }
+
 }
