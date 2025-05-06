@@ -17,6 +17,7 @@
 package fr.utc.miage.Acteurs;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import fr.utc.miage.Market.Marche;
 import fr.utc.miage.shares.Action;
+import fr.utc.miage.shares.ActionCompose;
 import fr.utc.miage.shares.ActionSimple;
 import fr.utc.miage.shares.Jour;
 import fr.utc.miage.shares.Portefeuille;
@@ -196,6 +198,136 @@ class InvestisseurTest {
         Investisseur investisseurPauvre = new Investisseur("John", "Doe", "password", 0);
         float totalValue = investisseurPauvre.getTotalValueOfWallet();
         assertEquals(0, totalValue);
+    }
+
+    @Test
+    void testBuyActionComposeSuccess() {
+        ActionSimple comp1 = new ActionSimple("comp1");
+        ActionSimple comp2 = new ActionSimple("comp2");
+
+        comp1.enrgCours(jour, 100);
+        comp2.enrgCours(jour, 200);
+
+        Map<ActionSimple, Double> composition = new HashMap<>();
+        composition.put(comp1, 50.0);
+        composition.put(comp2, 50.0);
+        ActionCompose actioncompose = new ActionCompose("PanierMix", composition);
+
+        // Ajout au marché
+        Marche.getActionsAvailable().put(actioncompose, 10);
+
+        boolean result = investisseur.buyActionCompose(actioncompose, 2);
+
+        float valeurCompose = actioncompose.valeur(jour); // moyenne pondérée : 100*0.5 + 200*0.5 = 150
+
+        assertAll(
+                () -> assertTrue(result),
+                () -> assertEquals(1000 - valeurCompose * 2, investisseur.getBalance()),
+                () -> assertEquals(2, investisseur.getWallet().getActions().get(actioncompose)),
+                () -> assertEquals(8, Marche.getActionsAvailable().get(actioncompose))
+        );
+    }
+    @Test
+    void testBuyActionComposeInsufficientMarketQuantity() {
+        ActionSimple comp1 = new ActionSimple("comp1");
+        comp1.enrgCours(jour, 100);
+
+        Map<ActionSimple, Double> composition = new HashMap<>();
+        composition.put(comp1, 100.0);
+        ActionCompose actioncompose = new ActionCompose("Mono", composition);
+
+        Marche.getActionsAvailable().put(actioncompose, 2);
+
+        boolean result = investisseur.buyActionCompose(actioncompose, 3);
+
+        assertAll(
+                () -> assertFalse(result),
+                () -> assertFalse(investisseur.getWallet().getActions().containsKey(actioncompose)),
+                () -> assertEquals(2, Marche.getActionsAvailable().get(actioncompose))
+        );
+    }
+
+    @Test
+    void testBuyActionComposeInsufficientBalance() {
+        ActionSimple comp1 = new ActionSimple("comp1");
+        comp1.enrgCours(jour, 100);
+
+        Map<ActionSimple, Double> composition = new HashMap<>();
+        composition.put(comp1, 100.0);
+        ActionCompose actioncompose = new ActionCompose("Mono", composition);
+
+        investisseur.setBalance(50); //pas assez de flouze
+
+        Marche.getActionsAvailable().put(actioncompose, 5);
+
+        boolean result = investisseur.buyActionCompose(actioncompose, 1);
+
+        assertAll(
+                () -> assertFalse(result),
+                () -> assertFalse(investisseur.getWallet().getActions().containsKey(actioncompose)),
+                () -> assertEquals(5, Marche.getActionsAvailable().get(actioncompose))
+        );
+    }
+
+    @Test
+    void testBuyActionComposeNoValueForDay() {
+        ActionSimple comp1 = new ActionSimple("comp1");
+        // aucune valeur enregistrée
+
+        Map<ActionSimple, Double> composition = new HashMap<>();
+        composition.put(comp1, 100.0);
+        ActionCompose actioncompose = new ActionCompose("NoVal", composition);
+
+        Marche.getActionsAvailable().put(actioncompose, 5);
+
+        boolean result = investisseur.buyActionCompose(actioncompose, 1);
+
+        assertAll(
+                () -> assertFalse(result),
+                () -> assertFalse(investisseur.getWallet().getActions().containsKey(actioncompose)),
+                () -> assertEquals(5, Marche.getActionsAvailable().get(actioncompose))
+        );
+    }
+    @Test
+    void testSellActionComposeSuccess() {
+        ActionSimple comp1 = new ActionSimple("comp1");
+        comp1.enrgCours(jour, 100);
+        Map<ActionSimple, Double> composition = new HashMap<>();
+        composition.put(comp1, 100.0);
+
+        ActionCompose actioncompose = new ActionCompose("Solo", composition);
+        investisseur.getWallet().addAction(actioncompose, 3);
+        Marche.getActionsAvailable().put(actioncompose, 2); // avant vente
+
+        boolean result = investisseur.sellActionCompose(actioncompose, 2);
+
+        float valeur = actioncompose.valeur(jour);
+
+        assertAll(
+                () -> assertTrue(result),
+                () -> assertEquals(1000 + 2 * valeur, investisseur.getBalance()),
+                () -> assertEquals(1, investisseur.getWallet().getActions().get(actioncompose)),
+                () -> assertEquals(4, Marche.getActionsAvailable().get(actioncompose))
+        );
+    }
+    @Test
+    void testSellActionComposeNotOwned() {
+        ActionSimple comp1 = new ActionSimple("comp1");
+        comp1.enrgCours(jour, 100);
+        Map<ActionSimple, Double> composition = new HashMap<>();
+        composition.put(comp1, 100.0);
+
+        ActionCompose actioncompose = new ActionCompose("Solo", composition);
+        Marche.getActionsAvailable().put(actioncompose, 5);
+
+        boolean result = investisseur.sellActionCompose(actioncompose, 1);
+
+        assertAll(
+                () -> assertFalse(result),
+                () -> assertEquals(1000, investisseur.getBalance()),
+                () -> assertFalse(investisseur.getWallet().getActions().containsKey(actioncompose)),
+                () -> assertEquals(5, Marche.getActionsAvailable().get(actioncompose))
+    );
     }
 
 }
