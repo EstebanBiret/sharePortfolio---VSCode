@@ -110,4 +110,24 @@ public class Marche {
         actionsAvailable.clear();
     }
 
+     /**
+     * Displays the actions available on the market.
+     * @return a string listing available actions and their quantites
+     */
+    public String displaysActionAvailable(){
+    if (actionsAvailable.isEmpty()) return "Aucune action disponible sur le marché.";
+
+    StringBuilder result = new StringBuilder("Actions disponibles sur le marché:\n");
+    
+    actionsAvailable.forEach(
+        (action, quantity) -> result.append("- ")
+                                .append(action.getLibelle())
+                                .append(" : ")
+                                .append(quantity)
+                                .append(" unités\n")
+    );
+    System.out.println(result.toString());
+    return result.toString();
+    }
+
 }
