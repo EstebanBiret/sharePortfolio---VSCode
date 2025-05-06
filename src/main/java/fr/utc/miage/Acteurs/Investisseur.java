@@ -20,6 +20,7 @@ import java.util.Map;
 
 import fr.utc.miage.Market.Marche;
 import fr.utc.miage.shares.Action;
+import fr.utc.miage.shares.ActionCompose;
 import fr.utc.miage.shares.ActionSimple;
 import fr.utc.miage.shares.Jour;
 import fr.utc.miage.shares.Portefeuille;
@@ -97,6 +98,14 @@ public class Investisseur extends Personne {
     }
 
     /**
+     * Allows to set the wallet of the investor
+     * @param wallet the wallet of the investor
+     */
+    public void setWallet(Portefeuille wallet) {
+        this.wallet = wallet;
+    }
+
+    /**
      * Allows to buy an action
      * @param actionSimple the action to buy
      * @param quantity the quantity of actions to buy
@@ -130,7 +139,6 @@ public class Investisseur extends Personne {
         return false; //l'action n'est pas disponible sur le marché avec la quantité demandée
     }
 
-
     /**
      * Allows to sell an action
      * @param actionSimple the action to sell
@@ -160,6 +168,71 @@ public class Investisseur extends Personne {
         return true;
     }
 
+    /**
+     * Achète une action et l’ajoute au portefeuille de l'investisseur.
+     * Le coût est déduit du solde de l’investisseur.
+     *
+     * @param actionCompose l'action à acheter
+     * @param quantity la quantité à acheter
+     * @return true si l’achat a été effectué, false sinon
+     */
+    public boolean buyActionCompose(ActionCompose actionCompose, int quantity) {
+        //on vérifie si l'action est disponible sur le marché avec la quantité demandée
+        if(Marche.isActionAvailableWithQuantity(actionCompose, quantity)) {
+
+            //récupérer la valeur de l'action pour le jour du système
+            Jour jour = Jour.getActualJour();
+            float value = actionCompose.valeur(jour);
+
+            //l'action n'a pas de valeur pour le jour actuel
+            if (value == 0) return false;
+
+            //on vérifie si l'investisseur a assez d'argent pour acheter l'action en quantité demandée
+            if (balance >= value * quantity) {
+                //on achète l'action
+                wallet.addAction(actionCompose, quantity);
+                //on retire le montant de l'achat du solde de l'investisseur
+                balance -= value * quantity;
+                //on retire l'action du marché
+                Marche.updateActionQuantity(actionCompose, quantity, false);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false; //l'action n'est pas disponible sur le marché avec la quantité demandée
+    }
+
+    /**
+     * Vend une action du portefeuille de l'investisseur.
+     * La méthode met à jour le solde de l'investisseur selon la valeur de l'action.
+     *
+     * @param actionCompose l'action à vendre
+     * @param quantity la quantité à vendre
+     * @return true si la vente a été effectuée, false sinon
+     */
+    public boolean sellActionCompose( ActionCompose actionCompose, int quantity) {
+        // Vérifie que l'investisseur possède assez d'actions à vendre
+        if (wallet.getQuantity(actionCompose) < quantity) return false;
+
+        // Récupère la valeur de l'action pour le jour actuel
+        Jour jour = Jour.getActualJour();
+        float value = actionCompose.valeur(jour);
+
+        // Si la valeur est nulle, on ne peut pas vendre
+        if (value == 0) return false;
+
+        // Ajoute l'argent au solde de l'investisseur
+        balance += value * quantity;
+
+        // Retire les actions du portefeuille
+        wallet.removeAction(actionCompose, quantity);
+
+        // Ajoute les actions sur le marché
+        Marche.updateActionQuantity(actionCompose, quantity, true);
+
+        return true;
+    }
     /**
      * Allows to consult the value of an action in the wallet for a given day
      * @param actionSimple the action to consult

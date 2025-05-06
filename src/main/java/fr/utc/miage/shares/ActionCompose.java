@@ -18,6 +18,9 @@
 
  import java.util.Map;
  
+ /**
+  * This class represents a composite action.
+  */
  public class ActionCompose extends Action {
  
      /**
@@ -32,7 +35,7 @@
       * @param libelle the name of the composite action
       * @param composition simple actions and their percentage weights
       */
-     protected ActionCompose(String libelle, Map<ActionSimple, Double> composition) {
+     public ActionCompose(String libelle, Map<ActionSimple, Double> composition) {
          super(libelle);
          this.composition = composition;
      }

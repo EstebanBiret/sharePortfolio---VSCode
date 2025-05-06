@@ -22,8 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
+import fr.utc.miage.Market.Transaction;
 import fr.utc.miage.Market.Marche;
 import fr.utc.miage.shares.Action;
 import fr.utc.miage.shares.ActionSimple;
@@ -169,5 +173,89 @@ public class GestionnaireTest {
         Marche.clearActionsAvailable();
     }
 
+    @Test
+    void testConsultBestActionByDay() {
+        // GIVEN
+        Gestionnaire gestionnaire = new Gestionnaire(NAME_GESTIONNAIRE1, FIRST_NAME_GESTIONNAIRE1, PASSWORD_GESTIONNAIRE1);
+        Action A = new ActionSimple("A");
+        Action B = new ActionSimple("B");
+    
+        List<Transaction> transactions = List.of(
+            new Transaction(A, 100, LocalDateTime.of(2025, 5, 6, 10, 0), null, null, 120f),
+            new Transaction(B, 80, LocalDateTime.of(2025, 5, 6, 11, 0), null, null, 200f),
+            new Transaction(A, 50, LocalDateTime.of(2025, 5, 6, 15, 0), null, null, 130f)
+        );
+    
+        // WHEN
+        String result = gestionnaire.consultBestAction(transactions, "jour");
+    
+        // THEN
+        assertAll(
+            () -> assertTrue(result.contains("2025-05-06")),
+            () -> assertTrue(result.contains("A")),
+            () -> assertTrue(result.contains("150 unités"))
+        );
+    }
+    
+
+    @Test
+    void testConsultBestActionByMonth() {
+        // GIVEN
+        Gestionnaire gestionnaire = new Gestionnaire(NAME_GESTIONNAIRE1, FIRST_NAME_GESTIONNAIRE1, PASSWORD_GESTIONNAIRE1);
+        Action A = new ActionSimple("A");
+        Action B = new ActionSimple("B");
+    
+        List<Transaction> transactions = List.of(
+            new Transaction(B, 120, LocalDateTime.of(2025, 6, 10, 10, 0), null, null, 250f),
+            new Transaction(A, 90, LocalDateTime.of(2025, 6, 12, 14, 0), null, null, 160f)
+        );
+    
+        // WHEN
+        String result = gestionnaire.consultBestAction(transactions, "mois");
+    
+        // THEN
+        assertAll(
+            () -> assertTrue(result.contains("2025-06")),
+            () -> assertTrue(result.contains("B")),
+            () -> assertTrue(result.contains("120 unités"))
+        );
+    }
+    
+
+    @Test
+    void testConsultBestActionByYear(){
+        // GIVEN
+        Gestionnaire gestionnaire = new Gestionnaire(NAME_GESTIONNAIRE1, FIRST_NAME_GESTIONNAIRE1, PASSWORD_GESTIONNAIRE1);
+        Action A = new ActionSimple("A");
+        Action B = new ActionSimple("B");
+
+        List<Transaction> transactions = List.of(
+            new Transaction(B, 150, LocalDateTime.of(2024, 3, 5, 9, 30), null, null, 300f),
+            new Transaction(A, 100, LocalDateTime.of(2024, 1, 1, 12, 0), null, null, 140f)
+        );
+
+        // WHEN
+        String result = gestionnaire.consultBestAction(transactions, "annee");
+
+        // THEN
+        assertAll(
+            () -> assertTrue(result.contains("2024")),
+            () -> assertTrue(result.contains("B")),
+            () -> assertTrue(result.contains("150 unités"))
+        );
+    }
+
+    @Test
+    void testConsultBestActionEmptyList(){
+         // GIVEN
+        Gestionnaire gestionnaire = new Gestionnaire(NAME_GESTIONNAIRE1, FIRST_NAME_GESTIONNAIRE1, PASSWORD_GESTIONNAIRE1);
+        List<Transaction> emptyList = List.of();
+
+        // WHEN
+        String result = gestionnaire.consultBestAction(emptyList, "jour");
+
+        // THEN
+        assertEquals("No transactions found.", result);
+    }
    
 }
