@@ -174,4 +174,19 @@ class InvestisseurTest {
         assertEquals(0, value);
     }
 
+    @Test
+    void testGetTotalValueOfWallet() {
+        investisseur.getWallet().addAction(action, 1);
+        float totalValue = investisseur.getTotalValueOfWallet();
+
+        assertEquals(400, totalValue);
+    }
+
+    @Test
+    void testGetTotalValueOfEmptyWallet() {
+        Investisseur investisseurPauvre = new Investisseur("John", "Doe", "password", 0);
+        float totalValue = investisseurPauvre.getTotalValueOfWallet();
+        assertEquals(0, totalValue);
+    }
+
 }
