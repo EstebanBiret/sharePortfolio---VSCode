@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import fr.utc.miage.Acteurs.Investisseur;
 import fr.utc.miage.shares.Action;
+import fr.utc.miage.shares.ActionSimple;
 /**
  * Represents a transaction on the stock market.
  * A transaction records the exchange of a quantity of an Action between two investors at a specific date and price.
@@ -210,7 +211,8 @@ public class Transaction {
         return Objects.hash(action, quantity, date, buyer, seller, price);
     }
 
- 
+   
+
 
     
 }
