@@ -28,7 +28,7 @@ public class ActionSimple extends Action {
     /**
      * Default value for the action object.
      */
-    private static final int DEFAULT_ACTION_VALUE = 0;
+    private static final float DEFAULT_ACTION_VALUE = 0;
 
     /**
      * Map of the action object and its value for each day.
@@ -45,6 +45,7 @@ public class ActionSimple extends Action {
         super(libelle);
         // init spécifique
         this.mapCours = new HashMap<>();
+        this.mapCours.put(new Jour(2000, 1), DEFAULT_ACTION_VALUE);
     }
 
     /**
