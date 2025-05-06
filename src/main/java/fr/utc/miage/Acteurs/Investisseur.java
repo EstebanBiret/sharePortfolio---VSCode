@@ -46,7 +46,7 @@ public class Investisseur extends Personne {
      * @param nom the name of the investor
      * @param prenom the first name of the investor
      * @param password the password of the investor
-     * @param solde the balance of the investor
+     * @param balance the balance of the investor
      */
 
     public Investisseur(String nom, String prenom, String password, float balance) {
@@ -60,7 +60,7 @@ public class Investisseur extends Personne {
      * @param nom the name of the investor
      * @param prenom the first name of the investor
      * @param password the password of the investor
-     * @param solde the balance of the investor
+     * @param balance the balance of the investor
      * @param wallet the wallet of the investor
      */
 
@@ -80,10 +80,10 @@ public class Investisseur extends Personne {
 
     /**
      * Allows to set the balance of the investor
-     * @param solde the balance of the investor
+     * @param balance the balance of the investor
      */
-    public void setBalance(float solde) {
-        balance = solde;
+    public void setBalance(float balance) {
+        this.balance = balance;
     }
 
     /**
@@ -96,7 +96,7 @@ public class Investisseur extends Personne {
 
     /**
      * Allows to buy an action
-     * @param action the action to buy
+     * @param actionSimple the action to buy
      * @param quantity the quantity of actions to buy
      * @return true if the purchase was made, false otherwise
      */
